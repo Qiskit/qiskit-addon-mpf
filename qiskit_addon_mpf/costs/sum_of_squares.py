@@ -10,7 +10,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-"""Approximate static MPF coefficients."""
+"""Sum-of-squares MPF coefficients."""
 
 from __future__ import annotations
 
@@ -19,12 +19,12 @@ import cvxpy as cp
 from .lse import LSE
 
 
-def setup_approximate_model(
+def setup_sum_of_squares_problem(
     lse: LSE, *, max_l1_norm: float = 10.0
 ) -> tuple[cp.Problem, cp.Variable]:
-    r"""Construct a :external:class:`cvxpy.Problem` for finding approximate static MPF coefficients.
+    r"""Construct a :external:class:`cvxpy.Problem` for finding approximate MPF coefficients.
 
-    The optimization problem constructed by this class is defined as follows:
+    The optimization problem constructed by this function is defined as follows:
 
     - the cost function minimizes the sum of squares
       (:external:func:`~cvxpy.atoms.sum_squares.sum_squares`) of the distances to an exact solution
@@ -41,17 +41,18 @@ def setup_approximate_model(
 
     Here is an example:
 
-    >>> from qiskit_addon_mpf.static import setup_lse, setup_approximate_model
-    >>> lse = setup_lse([1,2,3], order=2, symmetric=True)
-    >>> problem, coeffs = setup_approximate_model(lse, max_l1_norm=3.0)
-    >>> print(problem)
+    >>> from qiskit_addon_mpf.costs import setup_sum_of_squares_problem
+    >>> from qiskit_addon_mpf.static import setup_static_lse
+    >>> lse = setup_static_lse([1,2,3], order=2, symmetric=True)
+    >>> problem, coeffs = setup_sum_of_squares_problem(lse, max_l1_norm=3.0)
+    >>> print(problem)  # doctest: +FLOAT_CMP
     minimize quad_over_lin(Vstack([1. 1.     1.]         @ x + -1.0,
                                   [1. 0.25   0.11111111] @ x + -0.0,
                                   [1. 0.0625 0.01234568] @ x + -0.0), 1.0)
     subject to Sum(x, None, False) == 1.0
                norm1(x) <= 3.0
 
-    You can then solve the problem and extract the expansion coefficients like so:
+    You can then solve the problem and access the expansion coefficients like so:
 
     >>> final_cost = problem.solve()
     >>> print(coeffs.value)  # doctest: +FLOAT_CMP

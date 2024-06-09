@@ -56,6 +56,21 @@ pip install 'qiskit-addon-mpf'
 
 For more installation information refer to these [installation instructions](docs/install.rst).
 
+#### Optional dependencies
+
+The `qiskit-addon-mpf` package has a number of optional dependencies which enable certain features.
+The dynamic MPF feature (see [2-3](#references)) is one such example.
+You can install the related optional dependencies like so:
+
+```bash
+pip install 'qiskit-addon-mpf[dynamic]'
+```
+
+> [!IMPORTANT]
+> The optional dependency [TeNPy](https://github.com/tenpy/tenpy) was previously offered under a GPLv3 license.
+> As of the release of [v1.0.4](https://github.com/tenpy/tenpy/releases/tag/v1.0.4) on October 2nd, 2024, it has been offered under the Apache v2 license.
+> The license of this package is only compatible with Apache-licensed versions of TeNPy.
+
 ----------------------------------------------------------------------------------------------------
 
 ### Deprecation Policy
@@ -85,7 +100,8 @@ We use [GitHub issues](https://github.com/Qiskit/qiskit-addon-mpf/issues/new/cho
 ### References
 
 1. A. Carrera Vazquez, D. J. Egger, D. Ochsner, and S. Wörner, [Well-conditioned multi-product formulas for hardware-friendly Hamiltonian simulation](https://quantum-journal.org/papers/q-2023-07-25-1067/), Quantum 7, 1067 (2023).
-2. S. Zhuk, N. Robertson, and S. Bravyi, [Trotter error bounds and dynamic multi-product formulas for Hamiltonian simulation](https://arxiv.org/abs/2306.12569v2), arXiv:2306.12569 [quant-ph].
+2. S. Zhuk, N. Robertson, and S. Bravyi, [Trotter error bounds and dynamic multi-product formulas for Hamiltonian simulation](https://arxiv.org/abs/2306.12569v2), arXiv:2306.12569v2 [quant-ph].
+3. N. Robertson, et al. [Tensor Network enhanced Dynamic Multiproduct Formulas](https://arxiv.org/abs/2407.17405v2), arXiv:2407.17405v2 [quant-ph].
 
 ----------------------------------------------------------------------------------------------------
 

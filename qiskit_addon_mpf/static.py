@@ -10,63 +10,31 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-"""Linear system of equations for static MPF coefficients."""
+"""Static MPF coefficients.
+
+.. currentmodule:: qiskit_addon_mpf.static
+
+This module provides the generator function for the linear system of equations (:class:`.LSE`) for
+computing static (that is, time-independent) MPF coefficients.
+
+.. autofunction:: setup_static_lse
+"""
 
 from __future__ import annotations
-
-from typing import NamedTuple, cast
 
 import cvxpy as cp
 import numpy as np
 
-
-class LSE(NamedTuple):
-    """A :class:`.namedtuple` representing a linear system of equations.
-
-    .. math::
-             A x = b
-    """
-
-    A: np.ndarray
-    """The left hand side of the LSE."""
-
-    b: np.ndarray
-    """The right hand side of the LSE."""
-
-    @property
-    def x(self) -> cp.Variable:
-        """Returns the $x$ :external:class:`~cvxpy.expressions.variable.Variable`."""
-        return cp.Variable(shape=len(self.b), name="x")
-
-    def solve(self) -> np.ndarray:
-        """Return the solution to this LSE: :math:`x=A^{-1}b`.
-
-        Returns:
-            The solution to this LSE.
-
-        Raises:
-            ValueError: if this LSE is parameterized with unassigned values.
-        """
-        if self.A.ndim == 1:
-            # self.A is a vector of cp.Expression objects
-            mat_a = np.array([row.value for row in self.A])
-            if any(row is None for row in mat_a):
-                raise ValueError(
-                    "This LSE contains unassigned parameter values! Assign a value to them first "
-                    "before trying to solve this LSE again."
-                )
-        else:
-            mat_a = self.A
-        return cast(np.ndarray, np.linalg.solve(mat_a, self.b))
+from .costs import LSE
 
 
-def setup_lse(
+def setup_static_lse(
     trotter_steps: list[int] | cp.Parameter,
     *,
     order: int = 1,
     symmetric: bool = False,
 ) -> LSE:
-    r"""Return the linear system of equations for computing the static MPF coefficients.
+    r"""Return the linear system of equations for computing static MPF coefficients.
 
     This function constructs the following linear system of equations:
 
@@ -87,8 +55,8 @@ def setup_lse(
 
     Here is an example:
 
-    >>> from qiskit_addon_mpf.static import setup_lse
-    >>> lse = setup_lse([1,2,3], order=2, symmetric=True)
+    >>> from qiskit_addon_mpf.static import setup_static_lse
+    >>> lse = setup_static_lse([1,2,3], order=2, symmetric=True)
     >>> print(lse.A)
     [[1.         1.         1.        ]
      [1.         0.25       0.11111111]
@@ -106,8 +74,19 @@ def setup_lse(
         symmetric: whether the individual product formulas making up the MPF are symmetric. For
             example, the Lie-Trotter formula is `not` symmetric, while Suzuki-Trotter `is`.
 
+            .. note::
+               Making use of this value is equivalent to the static MPF coefficient description
+               provided by [1]. In contrast, [2] disregards the symmetry of the individual product
+               formulas, effectively always setting ``symmetric=False``.
+
     Returns:
-        An :class:`.LSE`.
+        The :class:`.LSE` to find the static MPF coefficients as described above.
+
+    References:
+        [1]: A. Carrera Vazquez et al., Quantum 7, 1067 (2023).
+             https://quantum-journal.org/papers/q-2023-07-25-1067/
+        [2]: S. Zhuk et al., arXiv:2306.12569 (2023).
+             https://arxiv.org/abs/2306.12569
     """
     symmetric_factor = 2 if symmetric else 1
 

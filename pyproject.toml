@@ -27,19 +27,31 @@ requires-python = ">=3.9"
 
 dependencies = [
     "numpy>=1.23",
-    "cvxpy>=1.5",
+    "cvxpy>=1.6",
     "qiskit>=1.2, <2",
 ]
 
 [project.optional-dependencies]
+quimb = [
+    "quimb>=1.8.3, <2",
+    "qiskit-quimb",
+]
+tenpy = [
+    "physics-tenpy>=1.0.4, <2",
+]
+dynamic = [
+    "qiskit-addon-mpf[quimb,tenpy]",
+]
 dev = [
     "qiskit-addon-mpf[test,doctest,nbtest,lint,docs]",
     "tox>=4.4.3",
 ]
 basetest = [
-    "ddt>=1.7",
     "pytest>=8.0",
     "pytest-cov>=5.0",
+    "pytest-subtests>=0.13",
+    "qiskit-addon-mpf[dynamic]",
+    "qiskit-addon-utils",
 ]
 test = [
     "qiskit-addon-mpf[basetest]",
@@ -67,7 +79,6 @@ lint = [
 notebook-dependencies = [
     "qiskit-addon-mpf",
     "rustworkx[graphviz]>=0.15",
-    "qiskit-addon-utils",
     "matplotlib",
     "ipywidgets",
     "pylatexenc",
@@ -114,7 +125,6 @@ py-version = "3.9"
 disable = ["all"]
 enable = [
     "reimported",
-    "no-self-use",
     "no-else-raise",
     "redefined-argument-from-local",
     "redefined-builtin",
