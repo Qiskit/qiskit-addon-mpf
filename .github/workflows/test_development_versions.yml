@@ -37,6 +37,9 @@ jobs:
               "qiskit @ git+https://github.com/Qiskit/qiskit.git" \
               "qiskit-ibm-runtime @ git+https://github.com/Qiskit/qiskit-ibm-runtime.git" \
               --inplace
+      - name: Install binary dependencies
+        run: |
+          sudo apt-get install -y graphviz
       - name: Test using tox environment
         shell: bash
         run: |
