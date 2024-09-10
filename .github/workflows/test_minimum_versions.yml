@@ -33,9 +33,6 @@ jobs:
           python -m pip install extremal-python-dependencies==0.0.3
           pip install "tox==$(extremal-python-dependencies get-tox-minversion)"
           extremal-python-dependencies pin-dependencies-to-minimum --inplace
-      - name: Install binary dependencies
-        run: |
-          sudo apt-get install -y graphviz
       - name: Test using tox environment
         shell: bash
         run: |
