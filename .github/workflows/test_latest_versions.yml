@@ -40,6 +40,7 @@ jobs:
       - name: Install binary dependencies
         run: |
           sudo apt-get install -y graphviz
+        if: runner.os == 'Linux'
       - name: Test using tox environment
         shell: bash
         run: |
