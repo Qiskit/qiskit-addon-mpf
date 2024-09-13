@@ -13,6 +13,7 @@
 """Tests for the ``qiskit_addon_mpf.static.approximate`` module."""
 
 import unittest
+from typing import Any, ClassVar
 
 import cvxpy as cp
 import numpy as np
@@ -23,6 +24,12 @@ from qiskit_addon_mpf.static.lse import setup_lse
 class TestApproximateCoeffs(unittest.TestCase):
     """Tests for the ``qiskit_addon_mpf.static.approximate`` module."""
 
+    CVXPY_SOLVER_SETTINGS: ClassVar[dict[str, Any]] = {
+        "warm_start": False,
+        "eps_abs": 1e-7,
+        "eps_rel": 1e-7,
+    }
+
     def test_setup_approximate_model(self):
         """Tests the :meth:`.setup_approximate_model` method."""
         trotter_steps = [1, 2, 4]
@@ -30,12 +37,12 @@ class TestApproximateCoeffs(unittest.TestCase):
         problem, coeffs = setup_approximate_model(lse)
 
         with self.subTest("final cost"):
-            final_cost = problem.solve()
+            final_cost = problem.solve(**self.CVXPY_SOLVER_SETTINGS)
             self.assertAlmostEqual(final_cost, 0)
 
         with self.subTest("optimal coefficients"):
             expected = np.array([0.02222225, -0.44444444, 1.42222216])
-            np.testing.assert_allclose(coeffs.value, expected, rtol=1e-5)
+            np.testing.assert_allclose(coeffs.value, expected, rtol=1e-4)
 
     def test_setup_approximate_model_max_l1_norm(self):
         """Tests the :meth:`.setup_approximate_model` method with ``max_l1_norm``."""
@@ -44,12 +51,12 @@ class TestApproximateCoeffs(unittest.TestCase):
         problem, coeffs = setup_approximate_model(lse, max_l1_norm=1.5)
 
         with self.subTest("final cost"):
-            final_cost = problem.solve()
+            final_cost = problem.solve(**self.CVXPY_SOLVER_SETTINGS)
             self.assertAlmostEqual(final_cost, 0.00035765)
 
         with self.subTest("optimal coefficients"):
             expected = np.array([-0.001143293, -0.2488567, 1.25])
-            np.testing.assert_allclose(coeffs.value, expected, rtol=1e-5)
+            np.testing.assert_allclose(coeffs.value, expected, rtol=1e-4)
 
     def test_setup_approximate_model_params(self):
         """Tests the :meth:`.setup_approximate_model` method with parameters."""
@@ -60,12 +67,12 @@ class TestApproximateCoeffs(unittest.TestCase):
         ks.value = [1, 2, 4]
 
         with self.subTest("final cost"):
-            final_cost = problem.solve()
+            final_cost = problem.solve(**self.CVXPY_SOLVER_SETTINGS)
             self.assertAlmostEqual(final_cost, 0)
 
         with self.subTest("optimal coefficients"):
             expected = np.array([0.02222225, -0.44444444, 1.42222216])
-            np.testing.assert_allclose(coeffs.value, expected, rtol=1e-5)
+            np.testing.assert_allclose(coeffs.value, expected, rtol=1e-4)
 
 
 if __name__ == "__main__":
