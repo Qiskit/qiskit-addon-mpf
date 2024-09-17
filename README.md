@@ -29,7 +29,7 @@
 
 ### About
 
-Qiskit addons are a collection of modular tools for building utility-scale workloads powered by Qiskit.
+[Qiskit addons](https://docs.quantum.ibm.com/guides/addons) are a collection of modular tools for building utility-scale workloads powered by Qiskit.
 
 This package contains the Qiskit addon for multi-product formulas (MPFs).
 These can be used to reduce the Trotter error of Hamiltonian dynamics.
