@@ -10,20 +10,4 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-"""Multi-product formulas.
-
-.. currentmodule:: qiskit_addon_mpf
-
-.. autosummary::
-   :toctree:  ../stubs/
-   :nosignatures:
-
-Submodules
-==========
-
-.. autosummary::
-   :toctree:
-
-   static
-
-"""
+"""Multi-product formulas."""
