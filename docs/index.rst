@@ -70,6 +70,6 @@ License
    Tutorials <tutorials/index>
    How-To Guides <how_tos/index>
    Explanations <explanations/index>
-   API Reference <apidocs/qiskit_addon_mpf>
+   API Reference <apidocs/index>
    GitHub <https://github.com/Qiskit/qiskit-addon-mpf>
    Release Notes <release-notes>
