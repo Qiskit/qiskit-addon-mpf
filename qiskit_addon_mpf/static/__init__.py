@@ -10,38 +10,8 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-"""Static MPFs.
-
-.. currentmodule:: qiskit_addon_mpf.static
-
-Linear system of equations utilities
-------------------------------------
-
-.. autosummary::
-   :toctree:  ../stubs/
-   :nosignatures:
-
-   LSE
-   setup_lse
-
-Exact static MPF coefficients
------------------------------
-
-.. autosummary::
-   :toctree:  ../stubs/
-   :nosignatures:
-
-   setup_exact_model
-
-Approximate static MPF coefficients
------------------------------------
-
-.. autosummary::
-   :toctree:  ../stubs/
-   :nosignatures:
-
-   setup_approximate_model
-"""
+# Reminder: update the RST file in docs/apidocs when adding new interfaces.
+"""Static MPFs."""
 
 from .approximate import setup_approximate_model
 from .exact import setup_exact_model
