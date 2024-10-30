@@ -10,20 +10,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-"""Multi-product formulas.
-
-.. currentmodule:: qiskit_addon_mpf
-
-.. autosummary::
-   :toctree:  ../stubs/
-   :nosignatures:
-
-Submodules
-==========
-
-.. autosummary::
-   :toctree:
-
-   static
-
-"""
+# Warning: this module is not documented and it does not have an RST file.
+# If we ever publicly expose interfaces users can import from this module,
+# we should set up its RST file.
+"""Multi-product formulas."""

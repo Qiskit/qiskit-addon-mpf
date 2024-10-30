@@ -58,6 +58,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "matplotlib.sphinxext.plot_directive",
     "sphinx_copybutton",
+    "sphinx_reredirects",
     "reno.sphinxext",
     "nbsphinx",
     "qiskit_sphinx_theme",
@@ -109,6 +110,25 @@ intersphinx_mapping = {
 
 plot_working_directory = "."
 plot_html_show_source_link = False
+
+# ----------------------------------------------------------------------------------
+# Redirects
+# ----------------------------------------------------------------------------------
+
+_inlined_apis = [
+    ("qiskit_addon_mpf.static", "LSE"),
+    ("qiskit_addon_mpf.static", "setup_lse"),
+    ("qiskit_addon_mpf.static", "setup_exact_model"),
+    ("qiskit_addon_mpf.static", "setup_approximate_model"),
+]
+
+redirects = {
+    "apidocs/qiskit_addon_mpf": "./index.html",
+    **{
+        f"stubs/{module}.{name}": f"../apidocs/{module}.html#{module}.{name}"
+        for module, name in _inlined_apis
+    },
+}
 
 # ----------------------------------------------------------------------------------
 # Source code links
