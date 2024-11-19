@@ -104,7 +104,7 @@ in doing so it does not treat the order of the Pauli terms in a Hamiltonian with
 (like we do here).
 
 If one wants to compute the dynamic MPF coefficients of a time-evolution employing a product formula
-structure other than the ones implemented in quimb (like the example above), then one can use the
+structure other than the ones implemented in Quimb (like the example above), then one can use the
 time-evolution algorithm provided by this module. Rather than taking a single monolithic Hamiltonian
 whose time-evolution is to be modeled, the :class:`~.quimb_layers.LayerwiseEvolver` accepts a list
 of :class:`~.quimb_layers.LayerModel` objects, each one describing an individual layer of the

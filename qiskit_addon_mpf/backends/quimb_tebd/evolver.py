@@ -26,7 +26,7 @@ class TEBDEvolver(TEBD, Evolver):
     """A TEBD algorithm for evolving an internal MPO.
 
     As discussed in more detail in :mod:`~qiskit_addon_mpf.backends.quimb_tebd`, this extension of
-    quimb's existing :external:class:`quimb.tensor.TEBD` implementation time-evolves an internal
+    ``quimb``'s existing :external:class:`quimb.tensor.TEBD` implementation time-evolves an internal
     matrix product operator (MPO) rather than the conventional matrix product state (MPS).
 
     More concretely, the internal object is expected to be an :class:`~.quimb_tebd.MPOState`.

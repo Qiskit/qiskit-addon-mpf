@@ -30,7 +30,7 @@ class LayerwiseEvolver(quimb_tebd.TEBDEvolver):
 
     The motivation for this more complicated interface is that is provides a lot more flexbility and
     enables users to define custom Trotter product formulas rather than being limited to the ones
-    implemented by Quimb directly.
+    implemented by ``quimb`` directly.
     """
 
     def __init__(
