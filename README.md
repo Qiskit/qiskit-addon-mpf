@@ -12,6 +12,7 @@
   [![Downloads](https://img.shields.io/pypi/dm/qiskit-addon-mpf.svg?label=Downloads)](https://pypi.org/project/qiskit-addon-mpf/)
   [![Tests](https://github.com/Qiskit/qiskit-addon-mpf/actions/workflows/test_latest_versions.yml/badge.svg)](https://github.com/Qiskit/qiskit-addon-mpf/actions/workflows/test_latest_versions.yml)
   [![Coverage](https://coveralls.io/repos/github/Qiskit/qiskit-addon-mpf/badge.svg?branch=main)](https://coveralls.io/github/Qiskit/qiskit-addon-mpf?branch=main)
+</div>
 
 # Qiskit addon: multi-product formulas (MPF)
 
