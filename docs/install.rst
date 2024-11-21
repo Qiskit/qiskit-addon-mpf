@@ -56,7 +56,7 @@ If so, the first step is to clone the ``qiskit-addon-mpf`` repository.
 
     git clone git@github.com:Qiskit/qiskit-addon-mpf.git
 
-Next, upgrade pip and enter the repository.
+Next, upgrade ``pip`` and enter the repository.
 
 .. code:: sh
 

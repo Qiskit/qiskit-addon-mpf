@@ -1,0 +1,19 @@
+---
+features:
+  - |
+    Adds the ability to compute dynamic (i.e. time-dependent) MPF coefficients.
+    For more details, refer to :mod:`qiskit_addon_mpf.dynamic`.
+upgrade:
+  - |
+    The code for the static MPF coefficients has been moved.
+    It functions the same as before, but you have to update your imports and
+    function names as summarized in the table below:
+
+    ===============================================================  ===================================================================
+    Old                                                              New
+    ===============================================================  ===================================================================
+    ``from qiskit_addon_mpf.static import setup_lse``                ``from qiskit_addon_mpf.static import setup_static_lse``
+    ``from qiskit_addon_mpf.static import LSE``                      ``from qiskit_addon_mpf.costs import LSE``
+    ``from qiskit_addon_mpf.static import setup_exact_model``        ``from qiskit_addon_mpf.costs import setup_exact_problem``
+    ``from qiskit_addon_mpf.static import setup_approximate_model``  ``from qiskit_addon_mpf.costs import setup_sum_of_squares_problem``
+    ===============================================================  ===================================================================

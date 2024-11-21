@@ -107,6 +107,8 @@ intersphinx_mapping = {
     "qiskit": ("https://docs.quantum.ibm.com/api/qiskit/", None),
     "rustworkx": ("https://www.rustworkx.org/", None),
     "qiskit_addon_utils": ("https://qiskit.github.io/qiskit-addon-utils/", None),
+    "quimb": ("https://quimb.readthedocs.io/en/latest/", None),
+    "tenpy": ("https://tenpy.readthedocs.io/en/latest/", None),
 }
 
 plot_working_directory = "."
