@@ -68,9 +68,7 @@ pip install 'qiskit-addon-mpf[dynamic]'
 ```
 
 > [!IMPORTANT]
-> The optional dependency [TeNPy](https://github.com/tenpy/tenpy) was previously offered under a GPLv3 license.
-> As of the release of [v1.0.4](https://github.com/tenpy/tenpy/releases/tag/v1.0.4) on October 2nd, 2024, it has been offered under the Apache v2 license.
-> The license of this package is only compatible with Apache-licensed versions of TeNPy.
+> The optional dependency [TeNPy](https://github.com/tenpy/tenpy) was previously offered under a GPLv3 license. As of the release of [v1.0.4](https://github.com/tenpy/tenpy/releases/tag/v1.0.4) on October 2nd, 2024, it has been offered under the Apache v2 license. The license of this package is only compatible with Apache-licensed versions of TeNPy.
 
 ----------------------------------------------------------------------------------------------------
 
