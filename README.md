@@ -34,9 +34,10 @@
 This package contains the Qiskit addon for multi-product formulas (MPFs).
 These can be used to reduce the Trotter error of Hamiltonian dynamics.
 
-This package currently contains the following submodules:
+This package currently contains the following main entry points for users:
 
 - `qiskit_addon_mpf.static` for working with static MPFs [1-2](#references)
+- `qiskit_addon_mpf.dynamic` for working with dynamic MPFs [2-3](#references)
 
 ----------------------------------------------------------------------------------------------------
 
