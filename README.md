@@ -100,7 +100,7 @@ We use [GitHub issues](https://github.com/Qiskit/qiskit-addon-mpf/issues/new/cho
 ### References
 
 1. A. Carrera Vazquez, D. J. Egger, D. Ochsner, and S. Wörner, [Well-conditioned multi-product formulas for hardware-friendly Hamiltonian simulation](https://quantum-journal.org/papers/q-2023-07-25-1067/), Quantum 7, 1067 (2023).
-2. S. Zhuk, N. Robertson, and S. Bravyi, [Trotter error bounds and dynamic multi-product formulas for Hamiltonian simulation](https://arxiv.org/abs/2306.12569v2), arXiv:2306.12569v2 [quant-ph].
+2. S. Zhuk, N. Robertson, and S. Bravyi, [Trotter error bounds and dynamic multi-product formulas for Hamiltonian simulation](https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.033309), Phys. Rev. Research 6, 033309 (2024).
 3. N. Robertson, et al. [Tensor Network enhanced Dynamic Multiproduct Formulas](https://arxiv.org/abs/2407.17405v2), arXiv:2407.17405v2 [quant-ph].
 
 ----------------------------------------------------------------------------------------------------

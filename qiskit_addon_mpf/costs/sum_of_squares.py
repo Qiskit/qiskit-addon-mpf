@@ -66,8 +66,8 @@ def setup_sum_of_squares_problem(
         The optimization problem and coefficients variable.
 
     References:
-        [1]: S. Zhuk et al., arXiv:2306.12569 (2023).
-             https://arxiv.org/abs/2306.12569
+        [1]: S. Zhuk et al., Phys. Rev. Research 6, 033309 (2024).
+             https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.033309
     """
     coeffs = lse.x
     # NOTE: the following list comprehension is required to support parameterized LSE objects

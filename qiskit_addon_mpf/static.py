@@ -85,8 +85,8 @@ def setup_static_lse(
     References:
         [1]: A. Carrera Vazquez et al., Quantum 7, 1067 (2023).
              https://quantum-journal.org/papers/q-2023-07-25-1067/
-        [2]: S. Zhuk et al., arXiv:2306.12569 (2023).
-             https://arxiv.org/abs/2306.12569
+        [2]: S. Zhuk et al., Phys. Rev. Research 6, 033309 (2024).
+             https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.033309
     """
     symmetric_factor = 2 if symmetric else 1
 

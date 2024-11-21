@@ -60,8 +60,8 @@ class DynamicMPF:
     :class:`.LSE` of the dynamic MPF coefficients.
 
     References:
-        [1]: S. Zhuk et al., arXiv:2306.12569 (2023).
-             https://arxiv.org/abs/2306.12569
+        [1]: S. Zhuk et al., Phys. Rev. Research 6, 033309 (2024).
+             https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.033309
         [2]: N. Robertson et al., arXiv:2407.17405 (2024).
              https://arxiv.org/abs/2307.17405
     """
@@ -326,8 +326,8 @@ def setup_dynamic_lse(
         The :class:`.LSE` to find the dynamic MPF coefficients as described above.
 
     References:
-        [1]: S. Zhuk et al., arXiv:2306.12569 (2023).
-             https://arxiv.org/abs/2306.12569
+        [1]: S. Zhuk et al., Phys. Rev. Research 6, 033309 (2024).
+             https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.033309
         [2]: N. Robertson et al., arXiv:2407.17405v2 (2024).
              https://arxiv.org/abs/2407.17405v2
     """
