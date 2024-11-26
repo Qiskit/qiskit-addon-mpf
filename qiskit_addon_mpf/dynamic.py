@@ -63,7 +63,7 @@ class DynamicMPF:
         [1]: S. Zhuk et al., Phys. Rev. Research 6, 033309 (2024).
              https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.033309
         [2]: N. Robertson et al., arXiv:2407.17405 (2024).
-             https://arxiv.org/abs/2307.17405
+             https://arxiv.org/abs/2407.17405
     """
 
     def __init__(self, evolution_state: State, lhs: Evolver, rhs: Evolver) -> None:
