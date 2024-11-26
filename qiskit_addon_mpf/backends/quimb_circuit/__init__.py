@@ -55,10 +55,10 @@ trivial:
 >>> identity_factory = CircuitState
 
 The setup of the :class:`~.quimb_circuit.CircuitEvolver` is slightly more involved. It requires a
-**parametrized** :external:class:`~qiskit.circuit.QuantumCircuit` object as its input where the
+**parameterized** :external:class:`~qiskit.circuit.QuantumCircuit` object as its input where the
 :class:`~qiskit.circuit.Parameter` should take the place of the Trotter methods time step (``dt``).
 
-To show how such a parametrized Trotter circuit template is constructed, we reuse the same
+To show how such a parameterized Trotter circuit template is constructed, we reuse the same
 Hamiltonian and second-order Suzuki-Trotter formula as in :mod:`.quimb_layers`.
 
 >>> from qiskit.quantum_info import SparsePauliOp
@@ -86,7 +86,7 @@ constructing the actual circuits.
    It is **necessary** that the name of the :class:`~qiskit.circuit.Parameter` is ``dt``!
 
 We can choose a higher order Trotter formula for the ``exact_evolver_factory``. But note, that we
-must once again use a parametrized circuit, even if we immediately bind its parameter when
+must once again use a parameterized circuit, even if we immediately bind its parameter when
 constructing the ``partial`` function.
 
 >>> suzuki_4 = generate_time_evolution_circuit(hamil, time=dt, synthesis=SuzukiTrotter(order=4))

@@ -39,8 +39,8 @@ class CircuitEvolver(Evolver):
         Args:
             evolution_state: a reference to the time-evolution state.
             circuit: the template circuit encoding the time-evolution of a single Trotter step. This
-                circuit **must** be parametrized (see :external:class:`~qiskit.circuit.Parameter` in
-                place of the Trotter methods time step. This parameter must be named ``dt``.
+                circuit **must** be parameterized (see :external:class:`~qiskit.circuit.Parameter`
+                in place of the Trotter methods time step. This parameter must be named ``dt``.
             dt: the time step that will be used and later bound to the
                 :external:class:`~qiskit.circuit.Parameter` of the ``circuit`` object.
         """
