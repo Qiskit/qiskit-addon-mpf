@@ -134,6 +134,6 @@ from .evolver import TEBDEvolver
 from .state import MPOState
 
 __all__ = [
-    "TEBDEvolver",
     "MPOState",
+    "TEBDEvolver",
 ]
