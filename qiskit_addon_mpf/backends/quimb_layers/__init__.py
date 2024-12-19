@@ -67,6 +67,7 @@ Let us now inspect the time-evolution circuit of this Hamiltonian using a second
 Suzuki-Trotter formula.
 
 .. plot::
+   :alt: Output from the previous code.
    :context: close-figs
    :include-source:
 
@@ -81,6 +82,7 @@ further, by splitting the circuit into multiple layers as shown below (we recomb
 into a single circuit with barriers between them to ease the visualization).
 
 .. plot::
+   :alt: Output from the previous code.
    :context: close-figs
    :include-source:
 
