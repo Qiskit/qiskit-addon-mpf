@@ -157,7 +157,7 @@ from .evolver import TEBDEvolver
 from .state import MPOState, MPS_neel_state
 
 __all__ = [
-    "MPS_neel_state",
     "MPOState",
+    "MPS_neel_state",
     "TEBDEvolver",
 ]
