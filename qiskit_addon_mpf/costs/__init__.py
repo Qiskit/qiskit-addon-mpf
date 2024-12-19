@@ -39,6 +39,6 @@ from .sum_of_squares import setup_sum_of_squares_problem
 __all__ = [
     "LSE",
     "setup_exact_problem",
-    "setup_sum_of_squares_problem",
     "setup_frobenius_problem",
+    "setup_sum_of_squares_problem",
 ]
