@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Guards against unexpected behavior when ``N_steps != 1`` in
+    :meth:`qiskit_addon_mpf.backends.tenpy_layers.LayerwiseEvolver.evolve`.
