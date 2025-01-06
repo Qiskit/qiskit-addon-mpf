@@ -1,6 +1,6 @@
 # This code is a Qiskit project.
 #
-# (C) Copyright IBM 2024.
+# (C) Copyright IBM 2024, 2025.
 #
 # This code is licensed under the Apache License, Version 2.0. You may
 # obtain a copy of this license in the LICENSE.txt file in the root directory
@@ -21,34 +21,54 @@ from qiskit_addon_mpf.dynamic import setup_dynamic_lse
 if HAS_TENPY:
     from qiskit_addon_mpf.backends.tenpy_tebd import MPOState, MPS_neel_state, TEBDEvolver
     from tenpy.models import XXZChain2
+    from tenpy.networks.site import SpinHalfSite
+
+
+class ConserveXXZChain2(XXZChain2):
+    """TeNPy's XXZChain2 hard-codes Sz conservation. This subclass makes it configurable."""
+
+    def init_sites(self, model_params):
+        conserve = model_params.get("conserve", "Sz", bool)
+        sort_charge = model_params.get("sort_charge", True, bool)
+        return SpinHalfSite(conserve=conserve, sort_charge=sort_charge)  # use predefined Site
 
 
 @pytest.mark.skipif(not HAS_TENPY, reason="TeNPy is required for these unittests")
 class TestEndToEnd:
     @pytest.mark.parametrize(
-        ["time", "expected_A", "expected_b", "expected_coeffs"],
+        ["time", "expected_A", "expected_b", "expected_coeffs", "conserve"],
         [
             (
                 0.5,
                 [[1.0, 0.9997562], [0.9997562, 1.0]],
                 [0.99944125, 0.99857914],
                 [2.26805572, -1.26805543],
+                "None",
+            ),
+            (
+                0.5,
+                [[1.0, 0.9997562], [0.9997562, 1.0]],
+                [0.99944125, 0.99857914],
+                [2.26805572, -1.26805543],
+                "Sz",
             ),
             (
                 1.0,
                 [[1.0, 0.99189288], [0.99189288, 1.0]],
                 [0.98478594, 0.9676077],
                 [1.55870386, -0.55870386],
+                "Sz",
             ),
             (
                 1.5,
                 [[1.0, 0.95352741], [0.95352741, 1.0]],
                 [0.93918471, 0.71967399],
                 [2.8617227, -1.8617227],
+                "Sz",
             ),
         ],
     )
-    def test_end_to_end(self, time, expected_A, expected_b, expected_coeffs):
+    def test_end_to_end(self, time, expected_A, expected_b, expected_coeffs, conserve):
         np.random.seed(0)
 
         # constants
@@ -68,13 +88,14 @@ class TestEndToEnd:
 
         # This is the full model that we want to simulate. It is used for the "exact" time evolution
         # (which is approximated via a fourth-order Suzuki-Trotter formula).
-        exact_model = XXZChain2(
+        exact_model = ConserveXXZChain2(
             {
                 "L": L,
                 "Jz": 4.0 * Jz * J,
                 "Jxx": 4.0 * Jxx * J,
                 "hz": 2.0 * hz,
                 "bc_MPS": "finite",
+                "conserve": conserve,
                 "sort_charge": False,
             }
         )
@@ -98,7 +119,7 @@ class TestEndToEnd:
         model = setup_dynamic_lse(
             [4, 3],
             time,
-            partial(MPOState.initialize_from_lattice, exact_model.lat),
+            partial(MPOState.initialize_from_lattice, exact_model.lat, conserve=conserve == "Sz"),
             partial(
                 TEBDEvolver,
                 model=exact_model,
