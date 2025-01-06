@@ -1,6 +1,6 @@
 # This code is a Qiskit project.
 #
-# (C) Copyright IBM 2024.
+# (C) Copyright IBM 2024, 2025.
 #
 # This code is licensed under the Apache License, Version 2.0. You may
 # obtain a copy of this license in the LICENSE.txt file in the root directory
@@ -66,13 +66,21 @@ class LayerwiseEvolver(tenpy_tebd.TEBDEvolver):
         """Perform a single time step of TEBD.
 
         Args:
-            N_steps: should always be ``1`` in this case. See
-                :external:class:`~tenpy.algorithms.tebd.TEBDEngine` for more details.
+            N_steps: should always be ``1`` for this time-evolver, otherwise an error will be raised
+                (see below).
             dt: the time-step to use.
 
         Returns:
             The truncation error.
+
+        Raises:
+            RuntimeError: if ``N_steps`` is not equal to ``1``.
         """
+        if N_steps != 1:
+            raise RuntimeError(
+                "The LayerwiseEvolver only supports a single evolution step at a time!"
+            )
+
         if dt is not None:  # pragma: no branch
             assert dt == self._U_param["delta_t"]
 
