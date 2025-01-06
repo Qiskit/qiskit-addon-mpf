@@ -1,6 +1,6 @@
 # This code is a Qiskit project.
 #
-# (C) Copyright IBM 2024.
+# (C) Copyright IBM 2024, 2025.
 #
 # This code is licensed under the Apache License, Version 2.0. You may
 # obtain a copy of this license in the LICENSE.txt file in the root directory
@@ -37,9 +37,6 @@ class LayerModel(CouplingMPOModel, NearestNeighborModel):
 
         See :external:meth:`~tenpy.models.model.CouplingMPOModel.init_sites` for more details.
 
-        .. caution::
-           Currently, this enforces ``Sz`` conservation on all sites.
-
         Args:
             model_params: the model parameters.
 
@@ -48,8 +45,6 @@ class LayerModel(CouplingMPOModel, NearestNeighborModel):
         """
         # WARN: we use our own default to NOT sort charges (contrary to TeNPy default: `True`)
         sort_charge = model_params.get("sort_charge", False, bool)
-        # TODO: currently, this default Sz conservation is coupled to the LegCharge definition in
-        # MPOState.initialize_from_lattice. Not conserving Sz errors with 'Different ChargeInfo'.
         conserve = model_params.get("conserve", "Sz", str)
         return SpinHalfSite(conserve=conserve, sort_charge=sort_charge)
 

@@ -1,0 +1,8 @@
+---
+features:
+  - |
+    TeNPy can disable ``Sz`` conservation. Previously, the
+    :meth:`~qiskit_addon_mpf.backends.tenpy_tebd.MPOState.initialize_from_lattice`
+    method did not support this, but a new keyword argument ``conserve`` has
+    been added which allows the disabling of ``Sz`` conservation. The default
+    remains to be ``True``.

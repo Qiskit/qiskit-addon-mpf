@@ -1,6 +1,6 @@
 # This code is a Qiskit project.
 #
-# (C) Copyright IBM 2024.
+# (C) Copyright IBM 2024, 2025.
 #
 # This code is licensed under the Apache License, Version 2.0. You may
 # obtain a copy of this license in the LICENSE.txt file in the root directory
@@ -32,7 +32,7 @@ class MPOState(MPO, State):
     """
 
     @classmethod
-    def initialize_from_lattice(cls, lat: Lattice) -> MPOState:
+    def initialize_from_lattice(cls, lat: Lattice, *, conserve: bool = True) -> MPOState:
         """Construct an identity :class:`MPOState` instance matching the provided lattice shape.
 
         Given a lattice, this method constructs a new MPO identity matching the shape of the
@@ -40,6 +40,9 @@ class MPOState(MPO, State):
 
         Args:
             lat: the lattice describing the MPO sites.
+            conserve: whether to conserve ``Sz``. This is a simplified version of the more elaborate
+                ``conserve`` property of :class:`~tenpy.networks.site.SpinHalfSite`. The boolean
+                value simply indicates ``Sz`` (``True``) or ``None`` conservation (``False``)
 
         Returns:
             An identity MPO.
@@ -53,24 +56,22 @@ class MPOState(MPO, State):
 
         labels = ["wL", "p", "p*", "wR"]
 
-        # creates a list of tensor leg charge objects encoding charges + conjugations for tensor
-        # legs (i.e. dimensions)
-        leg_charge = [
-            # e.g. charge information for tensor leg / dimension [1] and label ["2*Sz"]
-            # creates a LegCharge object from the flattened list of charges
-            # one for each of four legs or dimensions on B
-            npc.LegCharge.from_qflat(npc.ChargeInfo([1], ["2*Sz"]), [1], qconj=1),
-            npc.LegCharge.from_qflat(npc.ChargeInfo([1], ["2*Sz"]), [1, -1], qconj=1),
-            npc.LegCharge.from_qflat(npc.ChargeInfo([1], ["2*Sz"]), [1, -1], qconj=-1),
-            npc.LegCharge.from_qflat(npc.ChargeInfo([1], ["2*Sz"]), [1], qconj=-1),
-        ]
+        if conserve:
+            # creates a list of tensor leg charge objects encoding charges + conjugations for tensor
+            # legs (i.e. dimensions)
+            leg_charge = [
+                # e.g. charge information for tensor leg / dimension [1] and label ["2*Sz"]
+                # creates a LegCharge object from the flattened list of charges
+                # one for each of four legs or dimensions on B
+                npc.LegCharge.from_qflat(npc.ChargeInfo([1], ["2*Sz"]), [1], qconj=1),
+                npc.LegCharge.from_qflat(npc.ChargeInfo([1], ["2*Sz"]), [1, -1], qconj=1),
+                npc.LegCharge.from_qflat(npc.ChargeInfo([1], ["2*Sz"]), [1, -1], qconj=-1),
+                npc.LegCharge.from_qflat(npc.ChargeInfo([1], ["2*Sz"]), [1], qconj=-1),
+            ]
 
-        B_array = npc.Array.from_ndarray(B, legcharges=leg_charge, labels=labels)
-
-        # FIXME: the following is supposed to allow `conserve=None` for our `SpinHalfSite` but it
-        # does not seem to work, even in the `conserve="Sz"` case.
-        #
-        # B_array = npc.Array.from_ndarray_trivial(B, labels=labels)
+            B_array = npc.Array.from_ndarray(B, legcharges=leg_charge, labels=labels)
+        else:
+            B_array = npc.Array.from_ndarray_trivial(B, labels=labels)
 
         num_sites = lat.N_sites
         # initialize the MPO psi with the wavepacket and an identity operator
