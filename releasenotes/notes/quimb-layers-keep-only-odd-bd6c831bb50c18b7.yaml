@@ -1,0 +1,8 @@
+---
+upgrade:
+  - |
+    The ``keep_only_odd`` attribute of :class:`.quimb_layers.LayerModel` has
+    been removed. The internal workings have been refactored to ensure that data
+    reported by its ``terms`` attribute (which is inherited from the base class)
+    is already taking the ``keep_only_odd`` argument of the
+    :meth:`.quimb_layers.LayerModel.from_quantum_circuit` constructor method.

@@ -30,29 +30,8 @@ class LayerModel(LocalHam1D):
     from Qiskit objects.
     """
 
-    def __init__(self, L, H2, H1=None, cyclic=False, keep_only_odd=None) -> None:
-        """Initialize a :class:`LayerModel` instance.
-
-        Most of the arguments below are simply forwarded to
-        :external:class:`quimb.tensor.LocalHam1D` so check out its documentation for more details.
-
-        Args:
-            L: the number of qubits.
-            H2: the two-site interactions.
-            H1: the optional on-site interactions.
-            cyclic: whether to apply periodic boundary conditions.
-            keep_only_odd: whether to keep only odd bond interactions. For more details see
-                :attr:`keep_only_odd`.
-        """
-        super().__init__(L, H2, H1, cyclic)
-        self.keep_only_odd = keep_only_odd
-        """Whether to keep only interactions on bonds with odd indices."""
-
     def get_gate_expm(self, where: tuple[int, int], x: float) -> np.ndarray | None:
         """Get the local term at the sites ``where``, matrix exponentiated by ``x``.
-
-        If ``where`` applies to an even bond index and :attr:`keep_only_odd` is ``True``, this
-        method will return ``None``.
 
         Args:
             where: the pair of site indices of the local term to get. This identifies the bond
@@ -60,11 +39,9 @@ class LayerModel(LocalHam1D):
             x: the value with which to matrix exponentiate the interaction term.
 
         Returns:
-            The interaction in terms of an array or ``None`` depending on :attr:`keep_only_odd` (see
-            above).
+            The interaction in terms of an array or ``None`` if this layer has no interaction on
+            this bond.
         """
-        if self.keep_only_odd is not None and where[0] % 2 - self.keep_only_odd:
-            return None
         try:
             return cast(np.ndarray, self._expm_cached(self.get_gate(where), x))
         except KeyError:
@@ -88,7 +65,7 @@ class LayerModel(LocalHam1D):
             scaling_factor: a factor with which to scale the term strengths. This can be used to
                 apply (for example) a time step scaling factor. It may also be used (e.g.) to split
                 onsite terms into two layers (even and odd) with $0.5$ of the strength, each.
-            keep_only_odd: the value to use for :attr:`keep_only_odd`.
+            keep_only_odd: whether to keep only interactions on bonds with odd indices.
             kwargs: any additional keyword arguments to pass to the :class:`LayerModel` constructor.
 
         Returns:
@@ -132,19 +109,29 @@ class LayerModel(LocalHam1D):
                     paulis_cache[op.name] = pauli("Z")
                     term = paulis_cache[op.name]
                 if sites[0] in H1:
-                    H1[sites[0]] += 2.0 * scaling_factor * op.params[0] * term
+                    H1[sites[0]] += scaling_factor * op.params[0] * term
                 else:
-                    H1[sites[0]] = 2.0 * scaling_factor * op.params[0] * term
+                    H1[sites[0]] = scaling_factor * op.params[0] * term
             else:
                 raise NotImplementedError(f"Cannot handle gate of type {op.name}")
 
         if len(H2) == 0:
             H2[None] = np.zeros((4, 4))
 
-        return cls(
+        ret = cls(
             circuit.num_qubits,
             H2,
             H1,
-            keep_only_odd=keep_only_odd,
             **kwargs,
         )
+
+        if keep_only_odd is not None:
+            # NOTE: if `keep_only_odd` was specified, that means we explicitly overwrite those H_bond
+            # values with `None` which we do not want to keep. In the case of (for example) coupling
+            # layers, this should have no effect since those bonds were `None` to begin with. However,
+            # in the case of onsite layers, this will remove half of the bonds ensuring that we split
+            # the bond updates into even and odd parts (as required by the TEBD algorithm).
+            for i in range(0 if keep_only_odd else 1, circuit.num_qubits, 2):
+                _ = ret.terms.pop((i - 1, i), None)
+
+        return ret
