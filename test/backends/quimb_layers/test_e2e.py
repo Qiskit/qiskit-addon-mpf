@@ -127,13 +127,11 @@ class TestEndToEnd:
         odd_onsite_layer = LayerModel.from_quantum_circuit(
             gen_ext_field_layer(L, hz),
             keep_only_odd=True,
-            scaling_factor=0.5,
             cyclic=False,
         )
         even_onsite_layer = LayerModel.from_quantum_circuit(
             gen_ext_field_layer(L, hz),
             keep_only_odd=False,
-            scaling_factor=0.5,
             cyclic=False,
         )
         # Our layers combine to form a second-order Suzuki-Trotter formula as follows:

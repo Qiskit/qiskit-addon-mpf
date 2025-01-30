@@ -1,0 +1,6 @@
+---
+upgrade:
+  - |
+    The ``scaling_factor`` keyword argument of the ``from_quantum_circuit``
+    constructor methods has been removed. It is not actually needed and was
+    merely adding an additional (confusing) re-scaling.

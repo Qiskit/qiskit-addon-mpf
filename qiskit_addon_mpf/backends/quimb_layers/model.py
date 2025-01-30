@@ -52,7 +52,6 @@ class LayerModel(LocalHam1D):
         cls,
         circuit: QuantumCircuit,
         *,
-        scaling_factor: float = 1.0,
         keep_only_odd: bool | None = None,
         **kwargs,
     ) -> LayerModel:
@@ -62,9 +61,6 @@ class LayerModel(LocalHam1D):
 
         Args:
             circuit: the quantum circuit to parse.
-            scaling_factor: a factor with which to scale the term strengths. This can be used to
-                apply (for example) a time step scaling factor. It may also be used (e.g.) to split
-                onsite terms into two layers (even and odd) with $0.5$ of the strength, each.
             keep_only_odd: whether to keep only interactions on bonds with odd indices.
             kwargs: any additional keyword arguments to pass to the :class:`LayerModel` constructor.
 
@@ -89,9 +85,9 @@ class LayerModel(LocalHam1D):
                     paulis_cache[op.name] = pauli("Z") & pauli("Z")
                     term = paulis_cache[op.name]
                 if sites in H2:
-                    H2[sites] += 0.5 * scaling_factor * op.params[0] * term
+                    H2[sites] += 0.5 * op.params[0] * term
                 else:
-                    H2[sites] = 0.5 * scaling_factor * op.params[0] * term
+                    H2[sites] = 0.5 * op.params[0] * term
             elif op.name == "xx_plus_yy":
                 term = paulis_cache.get(op.name, None)
                 if term is None:
@@ -100,18 +96,18 @@ class LayerModel(LocalHam1D):
                     paulis_cache[op.name] = paulis_cache["rxx"] + paulis_cache["ryy"]
                     term = paulis_cache[op.name]
                 if sites in H2:
-                    H2[sites] += 0.25 * scaling_factor * op.params[0] * term
+                    H2[sites] += 0.25 * op.params[0] * term
                 else:
-                    H2[sites] = 0.25 * scaling_factor * op.params[0] * term
+                    H2[sites] = 0.25 * op.params[0] * term
             elif op.name == "rz":
                 term = paulis_cache.get(op.name, None)
                 if term is None:
                     paulis_cache[op.name] = pauli("Z")
                     term = paulis_cache[op.name]
                 if sites[0] in H1:
-                    H1[sites[0]] += scaling_factor * op.params[0] * term
+                    H1[sites[0]] += 0.5 * op.params[0] * term
                 else:
-                    H1[sites[0]] = scaling_factor * op.params[0] * term
+                    H1[sites[0]] = 0.5 * op.params[0] * term
             else:
                 raise NotImplementedError(f"Cannot handle gate of type {op.name}")
 

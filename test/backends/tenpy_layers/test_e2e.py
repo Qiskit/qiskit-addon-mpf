@@ -144,14 +144,12 @@ class TestEndToEnd:
         odd_onsite_layer = LayerModel.from_quantum_circuit(
             gen_ext_field_layer(L, hz),
             keep_only_odd=True,
-            scaling_factor=0.5,
             conserve=conserve,
             bc_MPS="finite",
         )
         even_onsite_layer = LayerModel.from_quantum_circuit(
             gen_ext_field_layer(L, hz),
             keep_only_odd=False,
-            scaling_factor=0.5,
             conserve=conserve,
             bc_MPS="finite",
         )

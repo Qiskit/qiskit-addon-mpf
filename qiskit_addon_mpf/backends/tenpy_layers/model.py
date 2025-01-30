@@ -102,8 +102,6 @@ class LayerModel(CouplingMPOModel, NearestNeighborModel):
     def from_quantum_circuit(
         cls,
         circuit: QuantumCircuit,
-        *,
-        scaling_factor: float = 1.0,
         **kwargs,
     ) -> LayerModel:
         """Construct a :class:`LayerModel` from a :external:class:`~qiskit.circuit.QuantumCircuit`.
@@ -112,9 +110,6 @@ class LayerModel(CouplingMPOModel, NearestNeighborModel):
 
         Args:
             circuit: the quantum circuit to parse.
-            scaling_factor: a factor with which to scale the term strengths. This can be used to
-                apply (for example) a time step scaling factor. It may also be used (e.g.) to split
-                onsite terms into two layers (even and odd) with $0.5$ of the strength, each.
             kwargs: any additional keyword arguments to pass to the :class:`LayerModel` constructor.
 
         Returns:
@@ -132,18 +127,12 @@ class LayerModel(CouplingMPOModel, NearestNeighborModel):
 
             # NOTE: the hard-coded scaling factors below account for the Pauli matrix conversion
             if op.name == "rzz":
-                coupling_terms["Sz_i Sz_j"].append(
-                    (2.0 * scaling_factor * op.params[0], *sites, "Sz", "Sz", "Id")
-                )
+                coupling_terms["Sz_i Sz_j"].append((2.0 * op.params[0], *sites, "Sz", "Sz", "Id"))
             elif op.name == "xx_plus_yy":
-                coupling_terms["Sp_i Sm_j"].append(
-                    (0.5 * scaling_factor * op.params[0], *sites, "Sp", "Sm", "Id")
-                )
-                coupling_terms["Sp_i Sm_j"].append(
-                    (0.5 * scaling_factor * op.params[0], *sites, "Sm", "Sp", "Id")
-                )
+                coupling_terms["Sp_i Sm_j"].append((0.5 * op.params[0], *sites, "Sp", "Sm", "Id"))
+                coupling_terms["Sp_i Sm_j"].append((0.5 * op.params[0], *sites, "Sm", "Sp", "Id"))
             elif op.name == "rz":
-                onsite_terms["Sz"].append((2.0 * scaling_factor * op.params[0], *sites, "Sz"))
+                onsite_terms["Sz"].append((op.params[0], *sites, "Sz"))
             else:
                 raise NotImplementedError(f"Cannot handle gate of type {op.name}")
 
