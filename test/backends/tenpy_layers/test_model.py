@@ -30,7 +30,7 @@ class TestLayerModel:
         for i in range(0, L - 1, 2):
             qc.rzz(1.0, i, i + 1)
         for i in range(L):
-            qc.rz(1.0, i)
+            qc.rz(2.0, i)
         for i in range(1, L - 1, 2):
             qc.append(XXPlusYYGate(1.0), [i, i + 1])
 
