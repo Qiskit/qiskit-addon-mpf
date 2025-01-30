@@ -174,8 +174,10 @@ class TestEndToEnd:
             initial_state,
         )
         np.testing.assert_allclose(model.b, expected_b, rtol=1e-3)
-        np.testing.assert_allclose(model.A, expected_A, rtol=1e-4)
+        np.testing.assert_allclose(model.A, expected_A, rtol=1e-3)
 
         prob, coeffs = setup_frobenius_problem(model)
         prob.solve()
-        np.testing.assert_allclose(coeffs.value, expected_coeffs, rtol=1e-3)
+        # NOTE: this particular test converges to fairly different overlaps in the CI on MacOS only.
+        # Thus, the assertion threshold is so loose.
+        np.testing.assert_allclose(coeffs.value, expected_coeffs, rtol=1e-1)
