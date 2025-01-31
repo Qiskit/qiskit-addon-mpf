@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Literal, cast
 
-from quimb.tensor import TEBD
+from quimb.tensor import TEBD, MatrixProductState
 
 from .. import Evolver
 from .state import MPOState
@@ -37,7 +37,9 @@ class TEBDEvolver(TEBD, Evolver):
        that API here.
     """
 
-    def __init__(self, evolution_state: MPOState, *args, order: int = 2, **kwargs) -> None:
+    def __init__(
+        self, evolution_state: MPOState | MatrixProductState, *args, order: int = 2, **kwargs
+    ) -> None:
         """Initialize a :class:`TEBDEvolver` instance.
 
         Args:
@@ -139,18 +141,31 @@ class TEBDEvolver(TEBD, Evolver):
         if dt is not None:
             dt_frac *= dt / self._dt  # pragma: no cover
 
+        # NOTE: support for MatrixProductState objects is only added for testing/debugging purposes!
+        # This is not meant for consumption by end-users of the `qiskit_addon_mpf.dynamic` module
+        # and its use is highly discouraged.
+        is_mps = isinstance(self._pt, MatrixProductState)
+
         final_site_ind = self.L - 1
         if direction == "right":
             for i in range(0, final_site_ind, 2):
                 sites = (i, (i + 1) % self.L)
                 gate = self._get_gate_from_ham(dt_frac, sites)
-                self._pt.gate_split_(gate, sites, conj=self.conjugate, **self.split_opts)
+                if is_mps:
+                    # NOTE: we ignore coverage here because the logic is tested via the LayerEvolver
+                    self._pt.gate_split_(gate, sites, **self.split_opts)  # pragma: no cover
+                else:
+                    self._pt.gate_split_(gate, sites, conj=self.conjugate, **self.split_opts)
 
         elif direction == "left":
             for i in range(1, final_site_ind, 2):
                 sites = (i, (i + 1) % self.L)
                 gate = self._get_gate_from_ham(dt_frac, sites)
-                self._pt.gate_split_(gate, sites, conj=self.conjugate, **self.split_opts)
+                if is_mps:
+                    # NOTE: we ignore coverage here because the logic is tested via the LayerEvolver
+                    self._pt.gate_split_(gate, sites, **self.split_opts)  # pragma: no cover
+                else:
+                    self._pt.gate_split_(gate, sites, conj=self.conjugate, **self.split_opts)
 
         else:
             # NOTE: it should not be possible to reach this but we do a sanity check to ensure that

@@ -33,7 +33,7 @@ dependencies = [
 
 [project.optional-dependencies]
 quimb = [
-    "quimb>=1.8.3, <2",
+    "quimb>=1.10.0, <2",
     "qiskit-quimb",
 ]
 tenpy = [

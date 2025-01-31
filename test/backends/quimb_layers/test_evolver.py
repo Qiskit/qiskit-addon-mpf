@@ -1,6 +1,6 @@
 # This code is a Qiskit project.
 #
-# (C) Copyright IBM 2024, 2025.
+# (C) Copyright IBM 2025.
 #
 # This code is licensed under the Apache License, Version 2.0. You may
 # obtain a copy of this license in the LICENSE.txt file in the root directory
@@ -15,11 +15,11 @@ import numpy as np
 import pytest
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.library import XXPlusYYGate
-from qiskit_addon_mpf.backends import HAS_TENPY
+from qiskit_addon_mpf.backends import HAS_QUIMB
 
-if HAS_TENPY:
-    from qiskit_addon_mpf.backends.tenpy_layers import LayerModel, LayerwiseEvolver
-    from qiskit_addon_mpf.backends.tenpy_tebd import MPOState, MPS_neel_state
+if HAS_QUIMB:
+    from qiskit_addon_mpf.backends.quimb_layers import LayerModel, LayerwiseEvolver
+    from quimb.tensor import MPS_neel_state, SpinHam1D
 
 
 def gen_ext_field_layer(n, hz):
@@ -52,24 +52,8 @@ def gen_even_coupling_layer(n, Jxx, Jz, J):
     return qc
 
 
-@pytest.mark.skipif(not HAS_TENPY, reason="Tenpy is required for these unittests")
+@pytest.mark.skipif(not HAS_QUIMB, reason="Quimb is required for these unittests")
 class TestLayerwiseEvolver:
-    def test_N_steps_guard(self):
-        L = 6
-
-        qc = QuantumCircuit(L)
-        for i in range(0, L - 1, 2):
-            qc.rzz(1.0, i, i + 1)
-
-        model = LayerModel.from_quantum_circuit(qc)
-
-        common_state = MPOState.initialize_from_lattice(model.lat)
-
-        algo = LayerwiseEvolver(common_state, [model], {})
-
-        with pytest.raises(RuntimeError):
-            algo.evolve(2, 0.1)
-
     def test_compare_statevector(self):
         """Test the time-evolution logic by comparing against an exact statevector simulation.
 
@@ -123,39 +107,49 @@ class TestLayerwiseEvolver:
         even_coupling_layer = gen_even_coupling_layer(L, Jxx, Jz, J)
         ext_field_layer = gen_ext_field_layer(L, hz)
 
-        model_opts = {
-            "bc_MPS": "finite",
-            "conserve": "Sz",
-            "sort_charge": False,
-        }
+        # Initialize the builder for a spin 1/2 chain
+        builder = SpinHam1D(S=1 / 2)
+
+        # Add XX and YY couplings for neighboring sites
+        for i in range(L - 1):
+            builder[i, i + 1] += 2.0 * Jxx * J[i], "-", "+"
+            builder[i, i + 1] += 2.0 * Jxx * J[i], "+", "-"
+
+        # Add ZZ couplings for neighboring sites
+        for i in range(L - 1):
+            builder[i, i + 1] += 4.0 * Jz * J[i], "Z", "Z"
+
+        # Add the external Z-field (hz) to each site
+        for i in range(L):
+            builder[i] += -2.0 * hz[i], "Z"
 
         layers = [
-            LayerModel.from_quantum_circuit(odd_coupling_layer, **model_opts),
-            LayerModel.from_quantum_circuit(even_coupling_layer, **model_opts),
-            LayerModel.from_quantum_circuit(ext_field_layer, keep_only_odd=True, **model_opts),
-            LayerModel.from_quantum_circuit(ext_field_layer, keep_only_odd=False, **model_opts),
-            LayerModel.from_quantum_circuit(ext_field_layer, keep_only_odd=False, **model_opts),
-            LayerModel.from_quantum_circuit(ext_field_layer, keep_only_odd=True, **model_opts),
-            LayerModel.from_quantum_circuit(even_coupling_layer, **model_opts),
-            LayerModel.from_quantum_circuit(odd_coupling_layer, **model_opts),
+            LayerModel.from_quantum_circuit(odd_coupling_layer, cyclic=False),
+            LayerModel.from_quantum_circuit(even_coupling_layer, cyclic=False),
+            LayerModel.from_quantum_circuit(ext_field_layer, keep_only_odd=True, cyclic=False),
+            LayerModel.from_quantum_circuit(ext_field_layer, keep_only_odd=False, cyclic=False),
+            LayerModel.from_quantum_circuit(ext_field_layer, keep_only_odd=False, cyclic=False),
+            LayerModel.from_quantum_circuit(ext_field_layer, keep_only_odd=True, cyclic=False),
+            LayerModel.from_quantum_circuit(even_coupling_layer, cyclic=False),
+            LayerModel.from_quantum_circuit(odd_coupling_layer, cyclic=False),
         ]
 
         trunc_options = {
-            "trunc_params": {
-                "chi_max": 100,
-                "svd_min": 1e-15,
-                "trunc_cut": None,
-            },
-            "preserve_norm": False,
-            "order": 2,
+            "max_bond": 100,
+            "cutoff": 1e-15,
+            "cutoff_mode": "rel",
+            "method": "svd",
+            "renorm": False,
         }
 
-        initial_state = MPS_neel_state(layers[0].lat)
+        initial_state = MPS_neel_state(L)
         mps_state = initial_state.copy()
-        mps_evo = LayerwiseEvolver(evolution_state=mps_state, layers=layers, options=trunc_options)
+        mps_evo = LayerwiseEvolver(
+            evolution_state=mps_state, layers=layers, dt=dt, split_opts=trunc_options
+        )
         for _ in range(N):
-            mps_evo.run_evolution(1, dt)
+            mps_evo.step()
 
         np.testing.assert_almost_equal(
-            mps_state.overlap(initial_state), -0.2607402383827852 - 0.6343830867298741j
+            initial_state.overlap(mps_evo.pt), -0.2607402383827852 - 0.6343830867298741j
         )
