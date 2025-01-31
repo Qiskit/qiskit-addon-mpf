@@ -14,6 +14,8 @@
 
 from __future__ import annotations
 
+from quimb.tensor import MatrixProductState
+
 from .. import quimb_tebd
 from .model import LayerModel
 
@@ -34,7 +36,11 @@ class LayerwiseEvolver(quimb_tebd.TEBDEvolver):
     """
 
     def __init__(
-        self, evolution_state: quimb_tebd.MPOState, layers: list[LayerModel], *args, **kwargs
+        self,
+        evolution_state: quimb_tebd.MPOState | MatrixProductState,
+        layers: list[LayerModel],
+        *args,
+        **kwargs,
     ) -> None:
         """Initialize a :class:`LayerwiseEvolver` instance.
 
@@ -62,6 +68,11 @@ class LayerwiseEvolver(quimb_tebd.TEBDEvolver):
         """
         dt = self._dt
 
+        # NOTE: support for MatrixProductState objects is only added for testing/debugging purposes!
+        # This is not meant for consumption by end-users of the `qiskit_addon_mpf.dynamic` module
+        # and its use is highly discouraged.
+        is_mps = isinstance(self._pt, MatrixProductState)
+
         for layer in self.layers:
             self.H = layer
             for i in range(self.L):
@@ -69,7 +80,10 @@ class LayerwiseEvolver(quimb_tebd.TEBDEvolver):
                 gate = self._get_gate_from_ham(1.0, sites)
                 if gate is None:
                     continue
-                self._pt.gate_split_(gate, sites, conj=self.conjugate, **self.split_opts)
+                if is_mps:
+                    self._pt.gate_split_(gate, sites, **self.split_opts)
+                else:
+                    self._pt.gate_split_(gate, sites, conj=self.conjugate, **self.split_opts)
 
         self.t += dt
         self._err += float("NaN")

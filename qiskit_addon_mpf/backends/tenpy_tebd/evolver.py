@@ -19,6 +19,7 @@ from typing import cast
 
 from tenpy import TEBDEngine, svd_theta
 from tenpy.linalg import np_conserved as npc
+from tenpy.networks import MPS
 
 from .. import Evolver
 
@@ -96,35 +97,51 @@ class TEBDEvolver(TEBDEngine, Evolver):
         """
         i0, i1 = i - 1, i
         LOGGER.debug("Update sites (%d, %d)", i0, i1)
-        # Construct the theta matrix
-        C0 = self.psi.get_W(i0)
-        C1 = self.psi.get_W(i1)
 
-        C = npc.tensordot(C0, C1, axes=(["wR"], ["wL"]))
-        new_labels = ["wL", "p0", "p0*", "p1", "p1*", "wR"]
+        # NOTE: support for MatrixProductState objects is only added for testing/debugging purposes!
+        # This is not meant for consumption by end-users of the `qiskit_addon_mpf.dynamic` module
+        # and its use is highly discouraged.
+        is_mps = isinstance(self.psi, MPS)
+
+        leg_lbl = "v" if is_mps else "w"
+        left_leg = f"{leg_lbl}L"
+        right_leg = f"{leg_lbl}R"
+        p0s = ("p0",) if is_mps else ("p0", "p0*")
+        p1s = ("p1",) if is_mps else ("p1", "p1*")
+        ps = ("p",) if is_mps else ("p", "p*")
+
+        # Construct the theta matrix
+        C0 = self.psi.get_B(i0) if is_mps else self.psi.get_W(i0)
+        C1 = self.psi.get_B(i1) if is_mps else self.psi.get_W(i1)
+
+        C = npc.tensordot(C0, C1, axes=([right_leg], [left_leg]))
+        new_labels = [left_leg, *p0s, *p1s, right_leg]
         C.iset_leg_labels(new_labels)
 
+        # apply U to C
         if self.conjugate:
             C = npc.tensordot(U_bond.conj(), C, axes=(["p0", "p1"], ["p0*", "p1*"]))  # apply U
         else:
             C = npc.tensordot(U_bond, C, axes=(["p0*", "p1*"], ["p0", "p1"]))  # apply U
-        C.itranspose(["wL", "p0", "p0*", "p1", "p1*", "wR"])
-        theta = C.scale_axis(self.psi.Ss[i0], "wL")
+
+        C.itranspose([left_leg, *p0s, *p1s, right_leg])
+
+        theta = C.scale_axis(self.psi.get_SL(i0) if is_mps else self.psi.Ss[i0], left_leg)
         # now theta is the same as if we had done
         #   theta = self.psi.get_theta(i0, n=2)
         #   theta = npc.tensordot(U_bond, theta, axes=(['p0*', 'p1*'], ['p0', 'p1']))  # apply U
         # but also have C which is the same except the missing "S" on the left
         # so we don't have to apply inverses of S (see below)
 
-        # theta = theta.combine_legs([("wL", "p0", "p0*"), ("p1", "p1*", "wR")], qconj=[+1, -1])
-        theta = theta.combine_legs([[0, 1, 2], [3, 4, 5]], qconj=[+1, -1])
+        theta = theta.combine_legs([(left_leg, *p0s), (*p1s, right_leg)], qconj=[+1, -1])
+
         # Perform the SVD and truncate the wavefunction
         U, S, V, trunc_err, renormalize = svd_theta(
-            theta, self.trunc_params, [None, None], inner_labels=["wR", "wL"]
+            theta, self.trunc_params, [None, None], inner_labels=[right_leg, left_leg]
         )
 
         # Split tensor and update matrices
-        B_R = V.split_legs(1).ireplace_labels(["p1", "p1*"], ["p", "p*"])
+        B_R = V.split_legs(1).ireplace_labels(p1s, ps)
 
         # In general, we want to do the following:
         #     U = U.iscale_axis(S, 'vR')
@@ -137,16 +154,29 @@ class TEBDEvolver(TEBDEngine, Evolver):
         # such that we obtain ``B_L = SL**-1 U S = SL**-1 U S V V^dagger = C V^dagger``
         # here, C is the same as theta, but without the `S` on the very left
         # (Note: this requires no inverse if the MPS is initially in 'B' canonical form)
+
+        def conj(labels: tuple[str, ...]):
+            """Conjugates a tuple of leg labels."""
+            return tuple(lbl[:-1] if lbl[-1] == "*" else lbl + "*" for lbl in labels)
+
         B_L = npc.tensordot(
-            C.combine_legs(("p1", "p1*", "wR"), pipes=theta.legs[1]),
+            C.combine_legs((*p1s, right_leg), pipes=theta.legs[1]),
             V.conj(),
-            axes=["(p1.p1*.wR)", "(p1*.p1.wR*)"],
+            axes=[f"({'.'.join(p1s)}.{right_leg})", f"({'.'.join(conj(p1s))}.{right_leg}*)"],
         )
-        B_L.ireplace_labels(["wL*", "p0", "p0*"], ["wR", "p", "p*"])
+        B_L.ireplace_labels([f"{left_leg}*", *p0s], [right_leg, *ps])
         B_L /= renormalize  # re-normalize to <psi|psi> = 1
 
-        self.psi.Ss[i1] = S
-        self.psi.set_W(i0, B_L)
-        self.psi.set_W(i1, B_R)
-        self._trunc_err_bonds[i] = self._trunc_err_bonds[i] + trunc_err
+        if is_mps:
+            self.psi.norm *= renormalize
+            self.psi.set_SR(i0, S)
+            self.psi.set_B(i0, B_L, form="B")
+            self.psi.set_B(i1, B_R, form="B")
+        else:
+            self.psi.Ss[i1] = S
+            self.psi.set_W(i0, B_L)
+            self.psi.set_W(i1, B_R)
+
+        self._trunc_err_bonds[i0] = self._trunc_err_bonds[i0] + trunc_err
+
         return cast(float, trunc_err)
