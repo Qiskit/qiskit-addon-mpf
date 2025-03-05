@@ -79,10 +79,11 @@ class LayerModel(LocalHam1D):
             sites = tuple(circuit.find_bit(qubit)[0] for qubit in instruction.qubits)
 
             # NOTE: the hard-coded scaling factors below account for the Pauli matrix conversion
-            if op.name == "rzz":
+            if op.name in {"rxx", "ryy", "rzz"}:
                 term = paulis_cache.get(op.name, None)
                 if term is None:
-                    paulis_cache[op.name] = pauli("Z") & pauli("Z")
+                    p = op.name[-1]
+                    paulis_cache[op.name] = pauli(p) & pauli(p)
                     term = paulis_cache[op.name]
                 if sites in H2:
                     H2[sites] += 0.5 * op.params[0] * term
@@ -99,10 +100,11 @@ class LayerModel(LocalHam1D):
                     H2[sites] += 0.25 * op.params[0] * term
                 else:
                     H2[sites] = 0.25 * op.params[0] * term
-            elif op.name == "rz":
+            elif op.name in {"rx", "ry", "rz"}:
                 term = paulis_cache.get(op.name, None)
                 if term is None:
-                    paulis_cache[op.name] = pauli("Z")
+                    p = op.name[-1]
+                    paulis_cache[op.name] = pauli(p)
                     term = paulis_cache[op.name]
                 if sites[0] in H1:
                     H1[sites[0]] += 0.5 * op.params[0] * term

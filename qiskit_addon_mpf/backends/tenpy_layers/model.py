@@ -108,6 +108,12 @@ class LayerModel(CouplingMPOModel, NearestNeighborModel):
 
         You can see an example of this function in action in the docs of :mod:`tenpy_layers`.
 
+        .. note::
+           By default, TeNPy tries to enforce spin-conservation and, thus, some operations may not
+           be available. If you encounter an error stating that some operator (e.g. ``Sx``) is not
+           available, try specifying ``conserve="None"``. If that still does not work, converting
+           your specific ``QuantumCircuit`` is currently not possible using this implementation.
+
         Args:
             circuit: the quantum circuit to parse.
             kwargs: any additional keyword arguments to pass to the :class:`LayerModel` constructor.
@@ -126,13 +132,23 @@ class LayerModel(CouplingMPOModel, NearestNeighborModel):
             sites = [circuit.find_bit(qubit)[0] for qubit in instruction.qubits]
 
             # NOTE: the hard-coded scaling factors below account for the Pauli matrix conversion
-            if op.name == "rzz":
-                coupling_terms["Sz_i Sz_j"].append((2.0 * op.params[0], *sites, "Sz", "Sz", "Id"))
+            if op.name in {"rxx", "ryy", "rzz"}:
+                s_p = f"S{op.name[-1]}"
+                coupling_terms[f"{s_p}_i {s_p}_j"].append(
+                    (
+                        2.0 * op.params[0],
+                        *sites,
+                        s_p,
+                        s_p,
+                        "Id",
+                    )
+                )
             elif op.name == "xx_plus_yy":
                 coupling_terms["Sp_i Sm_j"].append((0.5 * op.params[0], *sites, "Sp", "Sm", "Id"))
                 coupling_terms["Sp_i Sm_j"].append((0.5 * op.params[0], *sites, "Sm", "Sp", "Id"))
-            elif op.name == "rz":
-                onsite_terms["Sz"].append((op.params[0], *sites, "Sz"))
+            elif op.name in {"rx", "ry", "rz"}:
+                s_p = f"S{op.name[-1]}"
+                onsite_terms[s_p].append((op.params[0], *sites, s_p))
             else:
                 raise NotImplementedError(f"Cannot handle gate of type {op.name}")
 
