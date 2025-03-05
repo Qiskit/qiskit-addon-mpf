@@ -94,8 +94,9 @@ class DynamicMPF:
         Raises:
             RuntimeError: if the LHS and RHS evolved times are not equal at the end.
         """
+        time = np.round(time, 8)
         while np.round(self.lhs.evolved_time, 8) < time:
-            while self.rhs.evolved_time < self.lhs.evolved_time:
+            while np.round(self.rhs.evolved_time, 8) < np.round(self.lhs.evolved_time, 8):
                 self.rhs.step()
                 LOGGER.info("Stepped RHS to %s", self.rhs.evolved_time)
             self.lhs.step()
