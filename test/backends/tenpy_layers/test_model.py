@@ -85,6 +85,6 @@ class TestLayerModel:
 
     def test_handling_unsupportedown_gate(self):
         qc = QuantumCircuit(1)
-        qc.rx(1.0, 0)
+        qc.h(0)
         with pytest.raises(NotImplementedError):
             LayerModel.from_quantum_circuit(qc)
