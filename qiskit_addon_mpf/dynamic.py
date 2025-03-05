@@ -39,6 +39,7 @@ Core algorithm
 from __future__ import annotations
 
 import logging
+from functools import partial
 from typing import Any, Protocol
 
 import numpy as np
@@ -64,6 +65,15 @@ class DynamicMPF:
              https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.6.033309
         [2]: N. Robertson et al., arXiv:2407.17405 (2024).
              https://arxiv.org/abs/2407.17405
+    """
+
+    TIME_DECIMALS: int = 8
+    """The number of decimal places used for rounding the evolution times.
+
+    During the time evolution of the :attr:`evolution_state`, we often compare the evolved times of
+    the LHS and RHS engines against each other as well as the target evolution time. These checks
+    compare floating point numbers and this setting specifies the number of decimal places to which
+    we round.
     """
 
     def __init__(self, evolution_state: State, lhs: Evolver, rhs: Evolver) -> None:
@@ -94,25 +104,27 @@ class DynamicMPF:
         Raises:
             RuntimeError: if the LHS and RHS evolved times are not equal at the end.
         """
-        time = np.round(time, 8)
-        while np.round(self.lhs.evolved_time, 8) < time:
-            while np.round(self.rhs.evolved_time, 8) < np.round(self.lhs.evolved_time, 8):
+        round_ = partial(np.round, decimals=self.TIME_DECIMALS)
+        time = round_(time)
+        while round_(self.lhs.evolved_time) < time:
+            while round_(self.rhs.evolved_time) < round_(self.lhs.evolved_time):
                 self.rhs.step()
                 LOGGER.info("Stepped RHS to %s", self.rhs.evolved_time)
             self.lhs.step()
             LOGGER.info("Stepped LHS to %s", self.lhs.evolved_time)
         # we must ensure that the RHS can catch up with the LHS
-        while np.round(self.rhs.evolved_time, 8) < time:
+        while round_(self.rhs.evolved_time) < time:
             self.rhs.step()
             LOGGER.info("Stepped RHS to %s", self.rhs.evolved_time)
 
         LOGGER.info("Final times are %s and %s", self.lhs.evolved_time, self.rhs.evolved_time)
 
-        if not np.isclose(self.lhs.evolved_time, self.rhs.evolved_time):
-            # NOTE: it should not be possible to reach this but we do a sanity check nonetheless to
-            # ensure that the user knows if something went really wrong
-            raise RuntimeError(  # pragma: no cover
-                "The evolved times of the LHS and RHS are not equal: ",
+        if not np.isclose(
+            self.lhs.evolved_time, self.rhs.evolved_time, rtol=10**-self.TIME_DECIMALS
+        ):
+            raise RuntimeError(
+                "Check the numerical accuracy of your target evolution time! The evolved times of "
+                "the LHS and RHS are not equal: ",
                 self.lhs.evolved_time,
                 self.rhs.evolved_time,
             )
