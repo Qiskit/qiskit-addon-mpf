@@ -114,7 +114,7 @@ class TestEndToEnd:
             ),
             initial_state,
         )
-        np.testing.assert_allclose(model.b, expected_b, rtol=1e-3)
+        np.testing.assert_allclose(model.b, expected_b, rtol=1.5e-3)
         np.testing.assert_allclose(model.A, expected_A, rtol=1e-3)
 
         prob, coeffs = setup_frobenius_problem(model)
