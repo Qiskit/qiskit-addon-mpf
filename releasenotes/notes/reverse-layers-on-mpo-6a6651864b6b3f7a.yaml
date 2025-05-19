@@ -1,0 +1,11 @@
+---
+fixes:
+  - |
+    Fixes the order in which layers are applied to a common MPO state when
+    computing the dynamic MPF coefficients. Previously, the layers would be
+    applied in the order given, but when acting on an identity MPO and
+    contracting with the initial state from the outside, the layers have to be
+    reversed to produce the correct result.
+
+    This bug only affected circuits that are not symmetric with respect to layer
+    reversal.
