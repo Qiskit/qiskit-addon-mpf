@@ -262,6 +262,11 @@ class TestLayerwiseEvolver:
         mpo_evo_rhs = LayerwiseEvolver(
             evolution_state=common_state, layers=layers, options=trunc_options
         )
+        # NOTE: the following attribute should default to `True` because `common_state` is actually
+        # an MPO. But we set it here explicitly, to ensure we include the attribute's setter in the
+        # unittest coverage. We do not explicitly set this value for the LHS evolver, therefore also
+        # testing that the default behaves correctly.
+        mpo_evo_rhs.reverse_layers = True
 
         while np.round(mpo_evo_lhs.evolved_time, 8) < time:
             while np.round(mpo_evo_rhs.evolved_time, 8) < np.round(mpo_evo_lhs.evolved_time, 8):
