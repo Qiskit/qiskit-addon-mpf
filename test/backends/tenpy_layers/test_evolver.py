@@ -159,3 +159,118 @@ class TestLayerwiseEvolver:
         np.testing.assert_almost_equal(
             mps_state.overlap(initial_state), -0.2607402383827852 - 0.6343830867298741j
         )
+
+    def test_compare_middle_out(self):
+        """Regression test against https://github.com/Qiskit/qiskit-addon-mpf/issues/78.
+
+        Essentially, this test ensures that the layers are applied in _reverse_ order when acting on
+        an MPO identity as the common state.
+
+        The reference value against which is being compared here can be obtained from:
+
+        .. code-block:: python
+
+            odd_coupling_layer_lhs = gen_odd_coupling_layer(L, dt_lhs * Jxx, dt_lhs * Jz, J)
+            even_coupling_layer_lhs = gen_even_coupling_layer(L, dt_lhs * Jxx, dt_lhs * Jz, J)
+            onsite_layer_lhs = gen_ext_field_layer(L, dt_lhs * hz)
+            layers = [
+                odd_coupling_layer_lhs,
+                even_coupling_layer_lhs,
+                onsite_layer_lhs,
+            ]
+
+            trotter_circ_lhs = QuantumCircuit(L)
+            for layer in layers:
+                trotter_circ_lhs.compose(layer, inplace=True)
+            trotter_circ_lhs = trotter_circ_lhs.repeat(int(time / dt_lhs))
+
+            odd_coupling_layer_rhs = gen_odd_coupling_layer(L, dt_rhs * Jxx, dt_rhs * Jz, J)
+            even_coupling_layer_rhs = gen_even_coupling_layer(L, dt_rhs * Jxx, dt_rhs * Jz, J)
+            onsite_layer_rhs = gen_ext_field_layer(L, dt_rhs * hz)
+            layers = [
+                odd_coupling_layer_rhs,
+                even_coupling_layer_rhs,
+                onsite_layer_rhs,
+            ]
+
+            trotter_circ_rhs = QuantumCircuit(L)
+            for layer in layers:
+                trotter_circ_rhs.compose(layer, inplace=True)
+            trotter_circ_rhs = trotter_circ_rhs.repeat(int(time / dt_rhs))
+
+            init_circ = QuantumCircuit(L)
+            init_circ.x(1)
+            init_circ.x(3)
+
+            full_circ_lhs = init_circ.copy()
+            full_circ_lhs.compose(trotter_circ_lhs, inplace=True)
+
+            full_circ_rhs = init_circ.copy()
+            full_circ_rhs.compose(trotter_circ_rhs, inplace=True)
+
+            full_state_vec_lhs = Statevector(full_circ_lhs)
+            full_state_vec_rhs = Statevector(full_circ_rhs)
+            reference = full_state_vec_lhs.inner(full_state_vec_rhs)
+        """
+
+        np.random.seed(0)
+
+        L = 4
+        W = 0.5
+        epsilon = 0.5
+        J = np.random.rand(L - 1) + W * np.ones(L - 1)
+        Jz = 1.0
+        Jxx = epsilon
+        hz = 0.000000001 * np.array([(-1) ** i for i in range(L)])
+
+        dt_lhs = 0.01
+        dt_rhs = 0.25
+        time = 0.5
+
+        odd_coupling_layer = gen_odd_coupling_layer(L, Jxx, Jz, J)
+        even_coupling_layer = gen_even_coupling_layer(L, Jxx, Jz, J)
+        ext_field_layer = gen_ext_field_layer(L, hz)
+
+        model_opts = {
+            "bc_MPS": "finite",
+            "conserve": "Sz",
+            "sort_charge": False,
+        }
+
+        layers = [
+            LayerModel.from_quantum_circuit(odd_coupling_layer, **model_opts),
+            LayerModel.from_quantum_circuit(even_coupling_layer, **model_opts),
+            LayerModel.from_quantum_circuit(ext_field_layer, **model_opts),
+        ]
+
+        trunc_options = {
+            "trunc_params": {
+                "chi_max": 100,
+                "svd_min": 1e-15,
+                "trunc_cut": None,
+            },
+            "preserve_norm": False,
+            "order": 2,
+        }
+
+        initial_state = MPS_neel_state(layers[0].lat)
+        common_state = MPOState.initialize_from_lattice(layers[0].lat)
+        mpo_evo_lhs = LayerwiseEvolver(
+            evolution_state=common_state, layers=layers, options=trunc_options
+        )
+        mpo_evo_lhs.conjugate = True
+        mpo_evo_rhs = LayerwiseEvolver(
+            evolution_state=common_state, layers=layers, options=trunc_options
+        )
+
+        while np.round(mpo_evo_lhs.evolved_time, 8) < time:
+            while np.round(mpo_evo_rhs.evolved_time, 8) < np.round(mpo_evo_lhs.evolved_time, 8):
+                mpo_evo_rhs.run_evolution(1, dt_rhs)
+            mpo_evo_lhs.run_evolution(1, dt_lhs)
+
+        while np.round(mpo_evo_rhs.evolved_time, 8) < np.round(mpo_evo_lhs.evolved_time, 8):
+            mpo_evo_rhs.run_evolution(1, dt_rhs)
+
+        np.testing.assert_almost_equal(
+            common_state.overlap(initial_state), 0.99600363 - 0.00497457j
+        )
