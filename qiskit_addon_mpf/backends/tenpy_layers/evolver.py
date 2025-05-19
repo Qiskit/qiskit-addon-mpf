@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 from tenpy.linalg import TruncationError
+from tenpy.networks import MPO
 
 from .. import tenpy_tebd
 from .model import LayerModel
@@ -58,6 +59,23 @@ class LayerwiseEvolver(tenpy_tebd.TEBDEvolver):
         super().__init__(evolution_state, layers[0], *args, **kwargs)
         self.layers = layers
         """The layers of interactions used to implement the time-evolution."""
+        self._reverse_layers = isinstance(evolution_state, MPO)
+
+    @property
+    def reverse_layers(self) -> bool:
+        """Whether to reverse the layers.
+
+        This defaults to ``True`` when ``self.psi`` is an MPO and to ``False`` when it is an MPS.
+        This is necessary because the middle-out MPO contraction applies the circuits to an identity
+        initial state and contracts with the circuits intended initial state from the outside.
+        Therefore, the layers must be reversed to ensure the same circuit is computed as if it were
+        applied on top of the initial state.
+        """
+        return self._reverse_layers
+
+    @reverse_layers.setter
+    def reverse_layers(self, reverse_layers: bool) -> None:
+        self._reverse_layers = reverse_layers
 
     def evolve(self, N_steps: int, dt: float) -> TruncationError:
         # pylint: disable=attribute-defined-outside-init
@@ -84,8 +102,12 @@ class LayerwiseEvolver(tenpy_tebd.TEBDEvolver):
         if dt is not None:  # pragma: no branch
             assert dt == self._U_param["delta_t"]
 
+        layer_order = range(len(self.layers))
+        if self.reverse_layers:
+            layer_order = reversed(layer_order)  # type: ignore[assignment]
+
         trunc_err = TruncationError()
-        for U_idx_dt in range(len(self.layers)):
+        for U_idx_dt in layer_order:
             Us = self._U[U_idx_dt]
             for i_bond in range(self.psi.L):
                 if Us[i_bond] is None:
