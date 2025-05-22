@@ -104,7 +104,7 @@ intersphinx_mapping = {
     "numpy": ("https://numpy.org/doc/stable/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "cvxpy": ("https://www.cvxpy.org/", None),
-    "qiskit": ("https://docs.quantum.ibm.com/api/qiskit/", None),
+    "qiskit": ("https://quantum.cloud.ibm.com/docs/api/qiskit/", None),
     "rustworkx": ("https://www.rustworkx.org/", None),
     "qiskit_addon_utils": ("https://qiskit.github.io/qiskit-addon-utils/", None),
     "quimb": ("https://quimb.readthedocs.io/en/latest/", None),
