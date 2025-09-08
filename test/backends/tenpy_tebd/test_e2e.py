@@ -24,13 +24,15 @@ if HAS_TENPY:
     from tenpy.networks.site import SpinHalfSite
 
 
-class ConserveXXZChain2(XXZChain2):
-    """TeNPy's XXZChain2 hard-codes Sz conservation. This subclass makes it configurable."""
+if HAS_TENPY:
 
-    def init_sites(self, model_params):
-        conserve = model_params.get("conserve", "Sz", bool)
-        sort_charge = model_params.get("sort_charge", True, bool)
-        return SpinHalfSite(conserve=conserve, sort_charge=sort_charge)  # use predefined Site
+    class ConserveXXZChain2(XXZChain2):
+        """TeNPy's XXZChain2 hard-codes Sz conservation. This subclass makes it configurable."""
+
+        def init_sites(self, model_params):
+            conserve = model_params.get("conserve", "Sz", bool)
+            sort_charge = model_params.get("sort_charge", True, bool)
+            return SpinHalfSite(conserve=conserve, sort_charge=sort_charge)  # use predefined Site
 
 
 @pytest.mark.skipif(not HAS_TENPY, reason="TeNPy is required for these unittests")
