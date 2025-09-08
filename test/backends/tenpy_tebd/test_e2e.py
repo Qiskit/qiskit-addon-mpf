@@ -25,6 +25,7 @@ if HAS_TENPY:
 
 
 if HAS_TENPY:
+
     class ConserveXXZChain2(XXZChain2):
         """TeNPy's XXZChain2 hard-codes Sz conservation. This subclass makes it configurable."""
 
