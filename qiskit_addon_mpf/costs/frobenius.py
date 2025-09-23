@@ -90,7 +90,7 @@ def setup_frobenius_problem(
         >>> problem, coeffs = setup_frobenius_problem(lse, max_l1_norm=3.0)
         >>> print(problem)  # doctest: +FLOAT_CMP
         minimize 1.0 + QuadForm(x, [[1.00 1.00]
-                                    [1.00 1.00]]) + -[2.00003171 1.99997911] @ x
+                                    [1.00 1.00]]) + -([2.00003171 1.99997911] @ x)
         subject to Sum(x, None, False) == 1.0
                    norm1(x) <= 3.0
 
