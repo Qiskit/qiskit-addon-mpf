@@ -193,3 +193,4 @@ notice-rgx = """
 convention = "google"
 
 [tool.typos.default.extend-words]
+expec = "expec"

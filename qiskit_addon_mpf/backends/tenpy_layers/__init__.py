@@ -102,7 +102,7 @@ into a single circuit with barriers between them to ease the visualization).
    The asymmetry of the central layers is a result of the implementation of Qiskit's
    :external:class:`~qiskit.synthesis.SuzukiTrotter` formula. In its second-order form, it combines
    the two half-time evolutions of the final term in the Hamiltonian into a single one of twice the
-   length. We could transpile this circuit to collapse all such subequent gates in the central two
+   length. We could transpile this circuit to collapse all such subsequent gates in the central two
    layers (just like the last one), but for the sake of simplicity of this example, we will not do
    that here.
 
