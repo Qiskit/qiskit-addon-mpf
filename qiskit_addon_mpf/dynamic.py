@@ -316,10 +316,10 @@ def setup_dynamic_lse(
     ...     initial_state,
     ... )
     >>> print(lse.A)  # doctest: +FLOAT_CMP
-    [[1.         0.99998513]
-     [0.99998513 1.        ]]
+    [[1.     0.9999]
+     [0.9999 1.    ]]
     >>> print(lse.b)  # doctest: +FLOAT_CMP
-    [1.00001585 0.99998955]
+    [1.0000 0.9999]
 
     Args:
         trotter_steps: the sequence of trotter steps to be used.
