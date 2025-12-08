@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Expose the ``assume_PSD`` flag of :func:`cvxpy.atoms.quad_form.quad_form` in
+    the API of :func:`.setup_frobenius_problem`.
