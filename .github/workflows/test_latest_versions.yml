@@ -39,5 +39,7 @@ jobs:
           pip install tox
       - name: Test using tox environment
         shell: bash
+        env:
+          MPLBACKEND: Agg
         run: |
           tox -e py,notebook,doctest --parallel --parallel-no-spinner
