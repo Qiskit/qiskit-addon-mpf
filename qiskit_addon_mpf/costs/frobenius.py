@@ -99,7 +99,7 @@ def setup_frobenius_problem(
     .. doctest::
         >>> final_cost = problem.solve()
         >>> print(coeffs.value)  # doctest: +FLOAT_CMP
-        [-0.06611023  1.0661103]
+        [-0.06611023  1.0661103 ]
 
     Args:
         lse: the linear system of equations from which to build the model.
