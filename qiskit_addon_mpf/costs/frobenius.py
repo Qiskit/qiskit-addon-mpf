@@ -20,7 +20,7 @@ from .lse import LSE
 
 
 def setup_frobenius_problem(
-    lse: LSE, *, max_l1_norm: float = 10.0
+    lse: LSE, *, max_l1_norm: float = 10.0, assume_PSD: bool = False
 ) -> tuple[cp.Problem, cp.Variable]:
     r"""Construct a :external:class:`cvxpy.Problem` for finding approximate MPF coefficients.
 
@@ -87,10 +87,10 @@ def setup_frobenius_problem(
 
     .. doctest::
         >>> from qiskit_addon_mpf.costs import setup_frobenius_problem
-        >>> problem, coeffs = setup_frobenius_problem(lse, max_l1_norm=3.0)
+        >>> problem, coeffs = setup_frobenius_problem(lse, max_l1_norm=3.0, assume_PSD=True)
         >>> print(problem)  # doctest: +FLOAT_CMP
-        minimize 1.0 + QuadForm(x, [[1.00 1.00]
-                                    [1.00 1.00]]) + -([2.00003171 1.99997911] @ x)
+        minimize 1.0 + QuadForm(x, psd_wrap([[1.00 1.00]
+                                            [1.00 1.00]])) + -([2.00003171 1.99997911] @ x)
         subject to Sum(x, None, False) == 1.0
                    norm1(x) <= 3.0
 
@@ -109,6 +109,10 @@ def setup_frobenius_problem(
     Args:
         lse: the linear system of equations from which to build the model.
         max_l1_norm: the upper limit to use for the constrain of the L1-norm of the variables.
+        assume_PSD: whether to assume the provided :attr:`lse.A` matrix is positive semi-definite.
+            This is a keyword argument that gets forwarded to :func:`cvxpy.quad_form` and permits
+            bypassing any sanity checks to allow handling cases in which close-to-zero eigenvalues
+            are numerically instable.
 
     Returns:
         The optimization problem and coefficients variable.
@@ -120,7 +124,7 @@ def setup_frobenius_problem(
              https://arxiv.org/abs/2407.17405v2
     """
     coeffs = lse.x
-    cost = 1.0 + cp.quad_form(coeffs, lse.A) - 2.0 * lse.b.T @ coeffs
+    cost = 1.0 + cp.quad_form(coeffs, lse.A, assume_PSD=assume_PSD) - 2.0 * lse.b.T @ coeffs
     constraints = [cp.sum(coeffs) == 1, cp.norm1(coeffs) <= max_l1_norm]
     problem = cp.Problem(cp.Minimize(cost), constraints)
     return problem, coeffs

@@ -40,7 +40,7 @@ from __future__ import annotations
 
 import logging
 from functools import partial
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 import numpy as np
 
@@ -105,7 +105,7 @@ class DynamicMPF:
             RuntimeError: if the LHS and RHS evolved times are not equal at the end.
         """
         round_ = partial(np.round, decimals=self.TIME_DECIMALS)
-        time = round_(time)
+        time = cast(float, round_(time))
         while round_(self.lhs.evolved_time) < time:
             while round_(self.rhs.evolved_time) < round_(self.lhs.evolved_time):
                 self.rhs.step()
@@ -363,7 +363,7 @@ def setup_dynamic_lse(
     Bs = np.power(np.abs(Bs), 2)
 
     As = np.eye(len(trotter_steps), dtype=np.complex128)
-    for idx1, idx2 in zip(*np.triu_indices_from(As, k=1)):
+    for idx1, idx2 in zip(*np.triu_indices_from(As, k=1), strict=True):
         dta = time / trotter_steps[idx1]
         dtb = time / trotter_steps[idx2]
 

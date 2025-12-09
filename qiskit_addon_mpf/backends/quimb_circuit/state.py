@@ -71,7 +71,7 @@ class CircuitState(State):
         rhs.apply_gates(self.rhs.gates)
 
         # TODO: find a good way to inject arguments into .contract() below
-        # For example, specifcying backend="jax" would allow us to run this on a GPU (if available
+        # For example, specifying backend="jax" would allow us to run this on a GPU (if available
         # and installed properly).
         ovlp = TensorNetwork((lhs.psi.H, rhs.psi)).contract()
 

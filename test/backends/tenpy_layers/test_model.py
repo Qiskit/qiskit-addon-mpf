@@ -80,7 +80,7 @@ class TestLayerModel:
             ),
         ]
         assert model.H_bond[0] is None
-        for expected, actual in zip(expected_H_bonds, model.H_bond[1:]):
+        for expected, actual in zip(expected_H_bonds, model.H_bond[1:], strict=True):
             np.testing.assert_allclose(expected, actual.to_ndarray().reshape((4, 4)))
 
     def test_handling_unsupportedown_gate(self):

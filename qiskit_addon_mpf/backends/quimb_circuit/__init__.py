@@ -38,7 +38,7 @@ based :external:class:`quimb.tensor.Circuit` representation. We can leverage thi
 explicit time-evolution algorithm and instead directly encode the time-evolution in a
 :external:class:`~qiskit.circuit.QuantumCircuit` and use :external:mod:`quimb` to compute the
 overlap between two such circuits. For more information, check out their guide on
-:external:std:doc:`tensor-circuit`.
+:external:std:doc:`tensor/tensor-circuit`.
 
 
 Code example

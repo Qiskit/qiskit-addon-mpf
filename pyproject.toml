@@ -17,7 +17,6 @@ classifiers = [
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
     "Operating System :: Microsoft :: Windows",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -25,11 +24,11 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Physics",
 ]
 
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 dependencies = [
-    "numpy>=1.23",
-    "cvxpy>=1.7.3",
+    "numpy>=2.0",
+    "cvxpy>=1.7.4",
     "qiskit>=1.2, <3",
 ]
 
@@ -114,14 +113,14 @@ only-include = [
 allow-direct-references = true
 
 [tool.mypy]
-python_version = 3.9
+python_version = "3.10"
 show_error_codes = true
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true
 
 [tool.pylint.main]
-py-version = "3.9"
+py-version = "3.10"
 
 [tool.pylint."messages control"]
 disable = ["all"]
@@ -143,7 +142,7 @@ testpaths = ["./qiskit_addon_mpf/", "./test/"]
 [tool.ruff]
 line-length = 100
 src = ["qiskit_addon_mpf", "test"]
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = [
@@ -193,3 +192,4 @@ notice-rgx = """
 convention = "google"
 
 [tool.typos.default.extend-words]
+expec = "expec"

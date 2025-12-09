@@ -135,7 +135,7 @@ class MPOState(MatrixProductOperator, State):
         # We must generate new indices to join the old physical sites to the new gate.
         bnds = [rand_uuid() for _ in range(len(inds))]
         # And we keep track of mapping inds to bnds.
-        reindex_map = dict(zip(inds, bnds))
+        reindex_map = dict(zip(inds, bnds, strict=True))
 
         # Now we actually create the tensor of our gate.
         gate_tensor = Tensor(gate, inds=(*inds, *bnds), left_inds=bnds)
