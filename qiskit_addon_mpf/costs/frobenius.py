@@ -96,12 +96,8 @@ def setup_frobenius_problem(
 
     You can then solve the problem and access the expansion coefficients like so:
 
-    .. testsetup::
-       >>> import sys, pytest
-       >>> if not sys.platform.startswith("linux"):
-       ...     pytest.skip("This doctest only converges to numerically identical values on Linux")
-
     .. doctest::
+        :pyversion: < 3.10
         >>> final_cost = problem.solve()
         >>> print(coeffs.value)  # doctest: +FLOAT_CMP
         [0.50596416 0.49403584]
