@@ -136,7 +136,7 @@ class TEBDEvolver(TEBDEngine, Evolver):
         theta = theta.combine_legs([(left_leg, *p0s), (*p1s, right_leg)], qconj=[+1, -1])
 
         # Perform the SVD and truncate the wavefunction
-        U, S, V, trunc_err, renormalize = svd_theta(
+        _U, S, V, trunc_err, renormalize = svd_theta(
             theta, self.trunc_params, [None, None], inner_labels=[right_leg, left_leg]
         )
 
