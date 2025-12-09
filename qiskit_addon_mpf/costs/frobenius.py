@@ -57,24 +57,24 @@ def setup_frobenius_problem(
         >>> from qiskit_addon_mpf.backends.quimb_tebd import MPOState, TEBDEvolver
         >>> from qiskit_addon_mpf.dynamic import setup_dynamic_lse
         >>> from quimb.tensor import ham_1d_heis, MPO_identity, MPS_neel_state
-        >>> trotter_steps = [3, 4]
-        >>> time = 0.9
-        >>> num_qubits = 10
+        >>> trotter_steps = [1, 4]
+        >>> time = 0.5
+        >>> num_qubits = 4
         >>> initial_state = MPS_neel_state(num_qubits)
-        >>> hamil = ham_1d_heis(num_qubits, 0.8, 0.3, cyclic=False)
+        >>> hamil = ham_1d_heis(num_qubits, 1.8, 0.8, cyclic=False)
         >>> identity_factory = lambda: MPOState(MPO_identity(num_qubits))
         >>> exact_evolver_factory = partial(
         ...     TEBDEvolver,
         ...     H=hamil,
-        ...     dt=0.05,
+        ...     dt=0.01,
         ...     order=4,
-        ...     split_opts={"max_bond": 10, "cutoff": 1e-5},
+        ...     split_opts={"max_bond": 32, "cutoff": 1e-8},
         ... )
         >>> approx_evolver_factory = partial(
         ...     TEBDEvolver,
         ...     H=hamil,
         ...     order=2,
-        ...     split_opts={"max_bond": 10, "cutoff": 1e-5},
+        ...     split_opts={"max_bond": 16, "cutoff": 1e-6},
         ... )
         >>> lse = setup_dynamic_lse(
         ...     trotter_steps,
@@ -90,21 +90,16 @@ def setup_frobenius_problem(
         >>> problem, coeffs = setup_frobenius_problem(lse, max_l1_norm=3.0, assume_PSD=True)
         >>> print(problem)  # doctest: +FLOAT_CMP
         minimize 1.0 + QuadForm(x, psd_wrap([[1.00 1.00]
-                                            [1.00 1.00]])) + -([2.00003171 1.99997911] @ x)
+                                            [1.00 1.00]])) + -([1.99762409 1.99999147] @ x)
         subject to Sum(x, None, False) == 1.0
                    norm1(x) <= 3.0
 
     You can then solve the problem and access the expansion coefficients like so:
 
-    .. testsetup::
-       >>> import sys, pytest
-       >>> if not sys.platform.startswith("linux"):
-       ...     pytest.skip("This doctest only converges to numerically identical values on Linux")
-
     .. doctest::
         >>> final_cost = problem.solve()
         >>> print(coeffs.value)  # doctest: +FLOAT_CMP
-        [0.50596416 0.49403584]
+        [-0.06611023  1.0661103 ]
 
     Args:
         lse: the linear system of equations from which to build the model.
