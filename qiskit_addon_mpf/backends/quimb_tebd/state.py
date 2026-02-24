@@ -90,9 +90,9 @@ class MPOState(MatrixProductOperator, State):
             inplace: whether to perform the gate application in-place or return a new
                 :class:`MPOState` with the gate applied to it.
             conj: whether the gate should be applied to the lower (``conj=False``, the default,
-                :external:meth:`~quimb.tensor.tensor_arbgeom.TensorNetworkGenOperator.lower_ind`)
+                :external:meth:`~quimb.tensor.TensorNetworkGenOperator.lower_ind`)
                 or upper (``conj=True``,
-                :external:meth:`~quimb.tensor.tensor_arbgeom.TensorNetworkGenOperator.upper_ind`)
+                :external:meth:`~quimb.tensor.TensorNetworkGenOperator.upper_ind`)
                 indices of the underlying MPO.
 
                 .. note::

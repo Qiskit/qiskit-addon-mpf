@@ -59,7 +59,7 @@ test = [
 ]
 doctest = [
     "qiskit-addon-mpf[basetest,notebook-dependencies]",
-    "pytest-doctestplus>=1.2.1",
+    "pytest-doctestplus>=1.3.0",
 ]
 nbtest = [
     "qiskit-addon-mpf[basetest]",
@@ -192,4 +192,5 @@ notice-rgx = """
 convention = "google"
 
 [tool.typos.default.extend-words]
+CPY = "CPY"
 expec = "expec"
