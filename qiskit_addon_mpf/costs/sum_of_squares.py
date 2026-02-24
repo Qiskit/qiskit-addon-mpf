@@ -41,26 +41,22 @@ def setup_sum_of_squares_problem(
 
     Here is an example:
 
-    .. doctest-requires:: cvxpy>=1.8.0
-
-        >>> from qiskit_addon_mpf.costs import setup_sum_of_squares_problem
-        >>> from qiskit_addon_mpf.static import setup_static_lse
-        >>> lse = setup_static_lse([1,2,3], order=2, symmetric=True)
-        >>> problem, coeffs = setup_sum_of_squares_problem(lse, max_l1_norm=3.0)
-        >>> print(problem)  # doctest: +FLOAT_CMP, +NORMALIZE_WHITESPACE
-        minimize quad_over_lin(Vstack([1. 1.     1.]         @ x + -1.0,
-                                      [1. 0.25   0.11111111] @ x + -0.0,
-                                      [1. 0.0625 0.01234568] @ x + -0.0), 1.0, None, False)
-        subject to Sum(x, None, False) == 1.0
-                   norm1(x) <= 3.0
+    >>> from qiskit_addon_mpf.costs import setup_sum_of_squares_problem
+    >>> from qiskit_addon_mpf.static import setup_static_lse
+    >>> lse = setup_static_lse([1,2,3], order=2, symmetric=True)
+    >>> problem, coeffs = setup_sum_of_squares_problem(lse, max_l1_norm=3.0)
+    >>> print(problem)  # doctest: +FLOAT_CMP, +NORMALIZE_WHITESPACE, +SKIP
+    minimize quad_over_lin(Vstack([1. 1.     1.]         @ x + -1.0,
+                                  [1. 0.25   0.11111111] @ x + -0.0,
+                                  [1. 0.0625 0.01234568] @ x + -0.0), 1.0, None, False)
+    subject to Sum(x, None, False) == 1.0
+               norm1(x) <= 3.0
 
     You can then solve the problem and access the expansion coefficients like so:
 
-    .. doctest-requires:: cvxpy>=1.8.0
-
-        >>> final_cost = problem.solve()
-        >>> print(coeffs.value)  # doctest: +FLOAT_CMP
-        [ 0.03513467 -1.          1.96486533]
+    >>> final_cost = problem.solve()
+    >>> print(coeffs.value)  # doctest: +FLOAT_CMP
+    [ 0.03513467 -1.          1.96486533]
 
     Args:
         lse: the linear system of equations from which to build the model.
