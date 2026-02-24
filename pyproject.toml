@@ -192,4 +192,5 @@ notice-rgx = """
 convention = "google"
 
 [tool.typos.default.extend-words]
+CPY = "CPY"
 expec = "expec"
