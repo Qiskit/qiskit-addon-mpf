@@ -61,3 +61,17 @@ License
 -------
 
 `Apache License 2.0 <https://github.com/Qiskit/qiskit-addon-mpf/blob/main/LICENSE.txt>`_
+
+
+
+.. toctree::
+  :hidden:
+
+   Documentation Home <self>
+   Installation Instructions <install>
+   Tutorials <tutorials/index>
+   How-To Guides <how_tos/index>
+   Explanations <explanations/index>
+   API Reference <apidocs/index>
+   GitHub <https://github.com/Qiskit/qiskit-addon-mpf>
+   Release Notes <release-notes>
