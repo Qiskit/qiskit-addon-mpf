@@ -1,8 +1,6 @@
 ##########################################
-Qiskit addon: multi-product formulas (MPF)
+Qiskit addon: Multi-product formulas (MPF)
 ##########################################
-
-`Qiskit addons <https://quantum.cloud.ibm.com/docs/guides/addons>`_ are a collection of modular tools for building utility-scale workloads powered by Qiskit.
 
 This package contains the Qiskit addon for multi-product formulas (MPFs).
 These can be used to reduce the Trotter error of Hamiltonian dynamics.
@@ -12,22 +10,6 @@ This package currently contains the following main entry points for users:
 - ``qiskit_addon_mpf.static`` for working with static MPFs [`1-2 <#references>`_].
 - ``qiskit_addon_mpf.dynamic`` for working with dynamic MPFs [`2-3 <#references>`_].
 
-Documentation
--------------
-
-All documentation is available `here <https://qiskit.github.io/qiskit-addon-mpf/>`_.
-
-Installation
-------------
-
-We encourage installing this package via ``pip``, when possible:
-
-.. code-block:: bash
-
-   pip install 'qiskit-addon-mpf'
-
-
-For more installation information refer to the `installation instructions <install.rst>`_ in the documentation.
 
 Optional dependencies
 +++++++++++++++++++++
@@ -48,7 +30,7 @@ You can install the related optional dependencies like so:
    The license of this package is only compatible with Apache-licensed versions of TeNPy.
 
 
-Deprecation Policy
+Deprecation policy
 ------------------
 
 We follow `semantic versioning <https://semver.org/>`_ and are guided by the principles in
@@ -61,8 +43,6 @@ Each substantial improvement, breaking change, or deprecation will be documented
 
 Contributing
 ------------
-
-The source code is available `on GitHub <https://github.com/Qiskit/qiskit-addon-mpf>`_.
 
 The developer guide is located at `CONTRIBUTING.md <https://github.com/Qiskit/qiskit-addon-mpf/blob/main/CONTRIBUTING.md>`_
 in the root of this project's repository.
@@ -81,6 +61,7 @@ License
 -------
 
 `Apache License 2.0 <https://github.com/Qiskit/qiskit-addon-mpf/blob/main/LICENSE.txt>`_
+
 
 
 .. toctree::
