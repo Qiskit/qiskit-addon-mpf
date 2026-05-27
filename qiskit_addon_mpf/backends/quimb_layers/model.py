@@ -80,7 +80,7 @@ class LayerModel(LocalHam1D):
 
             # NOTE: the hard-coded scaling factors below account for the Pauli matrix conversion
             if op.name in {"rxx", "ryy", "rzz"}:
-                term = paulis_cache.get(op.name, None)
+                term = paulis_cache.get(op.name)
                 if term is None:
                     p = op.name[-1]
                     paulis_cache[op.name] = pauli(p) & pauli(p)
@@ -90,7 +90,7 @@ class LayerModel(LocalHam1D):
                 else:
                     H2[sites] = 0.5 * op.params[0] * term
             elif op.name == "xx_plus_yy":
-                term = paulis_cache.get(op.name, None)
+                term = paulis_cache.get(op.name)
                 if term is None:
                     paulis_cache["rxx"] = pauli("X") & pauli("X")
                     paulis_cache["ryy"] = pauli("Y") & pauli("Y")
@@ -101,7 +101,7 @@ class LayerModel(LocalHam1D):
                 else:
                     H2[sites] = 0.25 * op.params[0] * term
             elif op.name in {"rx", "ry", "rz"}:
-                term = paulis_cache.get(op.name, None)
+                term = paulis_cache.get(op.name)
                 if term is None:
                     p = op.name[-1]
                     paulis_cache[op.name] = pauli(p)
