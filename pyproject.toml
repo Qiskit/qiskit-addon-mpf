@@ -63,7 +63,7 @@ doctest = [
 ]
 nbtest = [
     "qiskit-addon-mpf[basetest]",
-    "nbmake>=1.5.0",
+    "nbmake>=1.5.5",
 ]
 style = [
     "ruff==0.15.14",
