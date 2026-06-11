@@ -1,5 +1,5 @@
 ##########################################
-Qiskit addon: Multi-product formulas (MPF)
+Multi-product formulas (MPF)
 ##########################################
 
 This package contains the Qiskit addon for multi-product formulas (MPFs).
