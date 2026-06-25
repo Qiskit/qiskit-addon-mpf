@@ -25,7 +25,7 @@ from quimb.tensor import LocalHam1D
 class LayerModel(LocalHam1D):
     """A model for representing a layer of time-evolution interactions.
 
-    Essentially, this class is a simple wrapper of :external:class:`quimb.tensor.LocalHam1D`. Its
+    Essentially, this class is a simple wrapper of :external:class:`quimb.tensor.tn1d.tebd.LocalHam1D`. Its
     main purpose is to provide a simple interface for constructing a Quimb-compatible Hamiltonian
     from Qiskit objects.
     """

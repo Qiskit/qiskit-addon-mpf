@@ -49,8 +49,8 @@ evolve an internal MPO state.
 As such, if you wish to use this backend for your dynamic MPF algorithm, you must encode the
 Hamiltonian that you wish to time-evolve, in a :external:mod:`quimb`-native form. To be more
 concrete, the :class:`~qiskit_addon_mpf.backends.quimb_tebd.TEBDEvolver` class (which is a subclass
-of :external:class:`quimb.tensor.TEBD`) works with a Hamiltonian in the form of a
-:external:class:`quimb.tensor.LocalHam1D`. Quimb provides a number of convenience methods for
+of :external:class:`quimb.tensor.tn1d.tebd.TEBD`) works with a Hamiltonian in the form of a
+:external:class:`quimb.tensor.tn1d.tebd.LocalHam1D`. Quimb provides a number of convenience methods for
 constructing such Hamiltonians in its :external:mod:`quimb.tensor.tensor_builder` module.
 If none of those fulfill your needs, you can consider using the
 :class:`~qiskit_addon_mpf.backends.quimb_layers.LayerModel` class which implements some conversion
@@ -63,8 +63,8 @@ This section shows a simple example to get you started with using this backend. 
 how to create the three factory functions required for the :func:`.setup_dynamic_lse`.
 
 First, we create the ``identity_factory`` which has to match the :class:`.IdentityStateFactory`
-protocol. We do so simply by using the :external:func:`quimb.tensor.MPO_identity` function and
-wrapping the resulting :external:class:`quimb.tensor.MatrixProductOperator` with our custom
+protocol. We do so simply by using the :external:func:`quimb.tensor.tensor_builder.MPO_identity` function and
+wrapping the resulting :external:class:`quimb.tensor.tn1d.core.MatrixProductOperator` with our custom
 :class:`~.quimb_tebd.MPOState` interface.
 
 >>> from qiskit_addon_mpf.backends.quimb_tebd import MPOState
@@ -108,7 +108,7 @@ approximate time evolution. Additionally, we also specify some truncation settin
 ... )
 
 Of course, you are not limited to the examples shown here, and we encourage you to play around with
-the other settings provided by the :external:class:`quimb.tensor.TEBD` implementation.
+the other settings provided by the :external:class:`quimb.tensor.tn1d.tebd.TEBD` implementation.
 
 Limitations
 -----------

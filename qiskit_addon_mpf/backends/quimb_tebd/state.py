@@ -39,7 +39,7 @@ from .. import State
 class MPOState(MatrixProductOperator, State):
     """An MPO enforcing the Vidal gauge.
 
-    This specialization of quimb's existing :external:class:`quimb.tensor.MatrixProductOperator`
+    This specialization of quimb's existing :external:class:`quimb.tensor.tn1d.core.MatrixProductOperator`
     enforces the Vidal gauge throughout its existence. This ensures a stable behavior of the
     :class:`.DynamicMPF` algorithm when using the
     :class:`~qiskit_addon_mpf.backends.quimb_tebd.TEBDEvolver`.
@@ -50,21 +50,21 @@ class MPOState(MatrixProductOperator, State):
 
         .. hint::
            All arguments (positional and keyword) are simply forwarded to the
-           :external:class:`quimb.tensor.MatrixProductOperator` constructor. Additionally, the
+           :external:class:`quimb.tensor.tn1d.core.MatrixProductOperator` constructor. Additionally, the
            :attr:`vidal_singular_values` attribute gets initialized to a list of empty lists of
            length equal to the number of sites in this MPO.
 
         Args:
             args: all positional arguments will be forwarded to the
-                :external:class:`quimb.tensor.MatrixProductState` constructor.
+                :external:class:`quimb.tensor.tn1d.core.MatrixProductState` constructor.
             kwargs: all keyword arguments will be forwarded to the
-                :external:class:`quimb.tensor.MatrixProductState` constructor.
+                :external:class:`quimb.tensor.tn1d.core.MatrixProductState` constructor.
         """
         super().__init__(*args, **kwargs)
 
         self.vidal_singular_values: list[list[float]] = [[]] * self._L
         """A nested list of singular values. The outer list is of equal length as this MPO itself
-        (:external:attr:`quimb.tensor.TensorNetwork1D.L`). Every item is another list of all the
+        (:external:attr:`quimb.tensor.tn1d.core.TensorNetwork1D.L`). Every item is another list of all the
         singular values for determining the Vidal gauge at that site.
         """
 
@@ -80,7 +80,7 @@ class MPOState(MatrixProductOperator, State):
         """Apply a two-site gate and contract it back into the MPO.
 
         The basic principle of this method is the same as that of
-        :external:meth:`quimb.tensor.MatrixProductState.gate_split`. However, the implementation
+        :external:meth:`quimb.tensor.tn1d.core.MatrixProductState.gate_split`. However, the implementation
         ensures that the Vidal gauge is conserved.
 
         Args:
@@ -90,9 +90,9 @@ class MPOState(MatrixProductOperator, State):
             inplace: whether to perform the gate application in-place or return a new
                 :class:`MPOState` with the gate applied to it.
             conj: whether the gate should be applied to the lower (``conj=False``, the default,
-                :external:meth:`~quimb.tensor.TensorNetworkGenOperator.lower_ind`)
+                :external:meth:`~quimb.tensor.tnag.core.TensorNetworkGenOperator.lower_ind`)
                 or upper (``conj=True``,
-                :external:meth:`~quimb.tensor.TensorNetworkGenOperator.upper_ind`)
+                :external:meth:`~quimb.tensor.tnag.core.TensorNetworkGenOperator.upper_ind`)
                 indices of the underlying MPO.
 
                 .. note::
@@ -100,7 +100,7 @@ class MPOState(MatrixProductOperator, State):
                    differentiated, by passing their :attr:`.Evolver.conjugate` property to this
                    argument.
             split_opts: additional keyword arguments that will be forwarded to the
-                :external:func:`quimb.tensor.tensor_split` function. These can be used to affect the
+                :external:func:`quimb.tensor.tensor_core.tensor_split` function. These can be used to affect the
                 truncation of the tensor before it gets contracted back into the MPO.
 
         Returns:
@@ -203,7 +203,7 @@ class MPOState(MatrixProductOperator, State):
 
         .. warning::
            This implementation only supports instances of
-           :external:class:`quimb.tensor.MatrixProductState` for ``initial_state``.
+           :external:class:`quimb.tensor.tn1d.core.MatrixProductState` for ``initial_state``.
 
         Args:
             initial_state: the initial state with which to compute the overlap.
@@ -216,7 +216,7 @@ class MPOState(MatrixProductOperator, State):
         """
         if not isinstance(initial_state, MatrixProductState):
             raise TypeError(
-                "MPOState.overlap is only implemented for quimb.tensor.MatrixProductState states! "
+                "MPOState.overlap is only implemented for quimb.tensor.tn1d.core.MatrixProductState states! "
                 "But not for states of type '%s'",
                 type(initial_state),
             )

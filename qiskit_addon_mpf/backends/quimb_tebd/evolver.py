@@ -26,14 +26,14 @@ class TEBDEvolver(TEBD, Evolver):
     """A TEBD algorithm for evolving an internal MPO.
 
     As discussed in more detail in :mod:`~qiskit_addon_mpf.backends.quimb_tebd`, this extension of
-    ``quimb``'s existing :external:class:`quimb.tensor.TEBD` implementation time-evolves an internal
+    ``quimb``'s existing :external:class:`quimb.tensor.tn1d.tebd.TEBD` implementation time-evolves an internal
     matrix product operator (MPO) rather than the conventional matrix product state (MPS).
 
     More concretely, the internal object is expected to be an :class:`~.quimb_tebd.MPOState`.
 
     .. warning::
        The API of this class is actually much larger than shown here, because it inherits additional
-       methods from the :external:class:`quimb.tensor.TEBD` base class. However, we do not duplicate
+       methods from the :external:class:`quimb.tensor.tn1d.tebd.TEBD` base class. However, we do not duplicate
        that API here.
     """
 
@@ -44,7 +44,7 @@ class TEBDEvolver(TEBD, Evolver):
 
         Args:
             evolution_state: a reference to the time-evolution state. This overwrites the ``p0``
-                argument of the underlying :external:class:`quimb.tensor.TEBD` class.
+                argument of the underlying :external:class:`quimb.tensor.tn1d.tebd.TEBD` class.
 
                 .. warning::
                    In contrast to the default behavior, this state will **NOT** be canonicalized.
@@ -53,12 +53,12 @@ class TEBDEvolver(TEBD, Evolver):
                    of this class, as required by the :class:`.DynamicMPF` algorithm.
 
             args: any further positional arguments will be forwarded to the
-                :external:class:`quimb.tensor.TEBD` constructor.
+                :external:class:`quimb.tensor.tn1d.tebd.TEBD` constructor.
             order: the order of the builtin Suzuki-Trotter formula to use during time evolution.
-                This will be the value forwarded to the :external:meth:`quimb.tensor.TEBD.step`
+                This will be the value forwarded to the :external:meth:`quimb.tensor.tn1d.tebd.TEBD.step`
                 method.
             kwargs: any further keyword arguments will be forwarded to the
-                :external:class:`quimb.tensor.TEBD` constructor.
+                :external:class:`quimb.tensor.tn1d.tebd.TEBD` constructor.
         """
         super().__init__(evolution_state, *args, **kwargs)
         # WARNING: we must forcefully overwrite self._pt to ensure that p0 is kept by reference!
@@ -83,7 +83,7 @@ class TEBDEvolver(TEBD, Evolver):
     def step(self) -> None:
         """Perform a single time step of TEBD.
 
-        This essentially calls :external:meth:`quimb.tensor.TEBD.step` and forwards the value of
+        This essentially calls :external:meth:`quimb.tensor.tn1d.tebd.TEBD.step` and forwards the value of
         the ``order`` attribute that was provided upon construction.
         """
         TEBD.step(self, order=self._order)
@@ -98,7 +98,7 @@ class TEBDEvolver(TEBD, Evolver):
         """Perform a single sweep of the TEBD algorithm [1].
 
         The TEBD algorithm updates the even and odd bonds of the underlying tensor network in
-        alternating fashion. In the implementation of the :external:class:`quimb.tensor.TEBD` base
+        alternating fashion. In the implementation of the :external:class:`quimb.tensor.tn1d.tebd.TEBD` base
         class, this is realized in the form of alternating "sweeps" in left and right directions
         over the internal state.
 
@@ -115,8 +115,8 @@ class TEBDEvolver(TEBD, Evolver):
 
         Raises:
             NotImplementedError: if ``queue=True``.
-            NotImplementedError: if :external:attr:`~quimb.tensor.TEBD.cyclic` is ``True``.
-            NotImplementedError: if :external:attr:`~quimb.tensor.TEBD.imag` is ``True``.
+            NotImplementedError: if :external:attr:`~quimb.tensor.tn1d.tebd.TEBD.cyclic` is ``True``.
+            NotImplementedError: if :external:attr:`~quimb.tensor.tn1d.tebd.TEBD.imag` is ``True``.
             RuntimeError: if an invalid ``direction`` is provided.
 
         References:

@@ -34,7 +34,7 @@ Underlying method
 -----------------
 
 Quimb boasts direct support for the simulation of quantum circuits in the form of its tensor-network
-based :external:class:`quimb.tensor.Circuit` representation. We can leverage this, to bypass any
+based :external:class:`quimb.tensor.circuit.exact.Circuit` representation. We can leverage this, to bypass any
 explicit time-evolution algorithm and instead directly encode the time-evolution in a
 :external:class:`~qiskit.circuit.QuantumCircuit` and use :external:mod:`quimb` to compute the
 overlap between two such circuits. For more information, check out their guide on
