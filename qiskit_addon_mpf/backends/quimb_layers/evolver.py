@@ -24,7 +24,7 @@ class LayerwiseEvolver(quimb_tebd.TEBDEvolver):
     """A special case of the :class:`~.quimb_tebd.TEBDEvolver` based on layer-wise evolution models.
 
     As also explained in :mod:`.quimb_layers`, this implementation extracts the alternating even/odd
-    bond updates implemented inside of the original :external:class:`quimb.tensor.TEBD` to become
+    bond updates implemented inside of the original :external:class:`quimb.tensor.tn1d.tebd.TEBD` to become
     the end users responsibility. It does so, by replacing the single Hamiltonian provided to the
     :class:`~.quimb_tebd.TEBDEvolver` instance with a sequence of :class:`~.quimb_layers.LayerModel`
     instances. Every single instance of these encodes a single **layer** of interactions. These
