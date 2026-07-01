@@ -29,7 +29,7 @@ requires-python = ">=3.10"
 dependencies = [
     "numpy>=2.0",
     "cvxpy>=1.7.5, <1.9",
-    "qiskit>=1.2, <3",
+    "qiskit>=2.4.2, <3",
 ]
 
 [project.optional-dependencies]
