@@ -27,7 +27,7 @@ classifiers = [
 requires-python = ">=3.10"
 
 dependencies = [
-    "numpy>=2.0",
+    "numpy>=2.2.6",
     "cvxpy>=1.7.5, <1.9",
     "qiskit>=1.2, <3",
 ]
